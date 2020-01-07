@@ -1,0 +1,148 @@
+---
+title: "BRIC vignette"
+subtitle: BRIC (Biclustering-based gene Regulation Inference and Cell-type prediction)
+abstract: BRIC is a novel biclustering method for the detection of the       repertoire of active GRS within each single cell. This introductory vignette provides an overview of the steps of the workflow, installation, and source of the dataset used as example.
+date: "March 18, 2019"
+output:
+  BiocStyle::html_document:
+    number_sections: no
+    toc: yes
+    highlight: pygments
+    
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Intorduction to BRIC
+
+BRIC (Biclustering-based gene Regulation Inference and Cell-type prediction) is a novel biclustering method for the detection of the repertoire of active GRS within each single cell, based on which we annotate the type and/or physiological state of each cell.
+
+The main idea of BRIC consists of two major steps: (i) detecting all gene co-regulation modules (GCM) each corresponding to a GRS, and (ii) inferring the active GRS of each cell, and further its cell type or physiological state. Step (i) first utilized our in-house left truncated mixture Gaussian (LTMG) model for an accurate quantification of the sample specific GRS for each individual gene. Step (ii) utilized the set of active states of GRS within a cell for its cell type prediction. 
+
+
+
+# Requirements
+## Environment
+
+We will assum you have the following installed:
+
+* R (current package tested based on R3.5.1, might work on lower version, though untested)
+
+## Input
+
+The input to BRIC is the single-cell RNA-seq expression matrix:
+
+* Rows correspond to genes and columns correspond to sampels(cells).
+* Expression units: the preferred expression values are RPKM/FPKM/CPM. 
+* The data file should be tab delimited.
+
+## Others
+
+When you call the cell type prediction function, it will output several intermediate files, thus please make sure that you have write permission to the folder where BRIC is located. 
+
+# Installation
+
+For installation, simply type the following command in your R console:
+```{r install, eval=FALSE}
+devtools::install_github("zy26/BRIC",force = T)
+```
+
+# Example dataset
+
+This tutorial run on a real dataset to illustrate the results obtained at each step.
+
+As example, we will use Yan's data, a dataset containing 90 cells and 20,214 genes from human embryo, to conduct cell type prediction.
+
+> Yan, L. et al. Single-cell RNA-Seq profiling of human preimplantation embryos and embryonic stem cells. Nat. Struct. Mol. Biol. 20, 1131-1139 (2013)
+
+The original expression matrix was downloaded from <https://s3.amazonaws.com/scrnaseq-public-datasets/manual-data/yan/nsmb.2660-S2.csv>. The expression is provided as RPKM value. For convenience, we removed the space in the column names and deleted the second column(Transcript_ID). The processed data is available at <https://github.com/zy26/BRICdata/blob/master/Example%20data/Yan_RPKM>.
+
+
+# Biclustering
+
+BRCI can provide biclustering function, which is based on our in-house novel algorithm, QUBIC2 (<https://github.com/maqin2001/qubic2>). Here we will show the basic biclustering usage of BRIC using a $100 \times 90$ expression matrix extracted from Yan's data(available at <https://github.com/zy26/BRICdata/blob/master/Example%20data/Yan_sub.txt>). 
+
+You can type the following command to run discretization + biclustering directly:
+```{r biclustering}
+# setwd('/path/to/your/data')
+library(BRIC)
+BRIC::qubic('Yan_sub.txt',R=TRUE)
+```
+
+This will output several files, and among them you will find one named  `Yan_sub.txt.chars.blocks`,which contains the predicted biclusters.
+
+Or, you may first type the following command to discretized the data:
+```{r discretize,eval=FALSE}
+BRIC::qubic('Yan_sub.txt',R=TRUE,F=TRUE)
+```
+
+When this step is done(you will find some files, including `Yan_sub.txt.chars`), type the following command to run biclustering:
+```{r biclustering2, eval=FALSE}
+BRIC::qubic('Yan_sub.txt.chars',d=TRUE)
+```
+Which will also output a file named `Yan_sub.txt.chars.blocks`.
+
+Note that the second way run discretization and biclustering seperately. Since discretization ususally take a long time, we recommend to use the second way. In this case, you can try biclustering parameters as needed based on the discretized data, avoiding wasting time on discretization.
+
+(The default parameters in BRIC are k=13, f=0.85, c=0.90,o=5000, you may use other parameters as you like, just specify them in the argument, e.g., BRIC::qubic('Yan_sub.txt',R=TRUE,k=8,f=0.90,c=0.95,o=1000))
+
+# Cell type prediction
+
+The cell type prediction of BRIC is based on the biclustering results. In short, it will construct a weighted graph based on the biclusters and then do clustering on the weighted graph. Currently, we provide two commonly used clustering methods: MCL and spectral clustering.
+
+To do cell type prediction, you can call the `final()`function, using expression matrix as input:
+
+```{r,eval=FALSE, cell_type}
+
+RST <-BRIC::final('Yan_RPKM',R=TRUE,method='MCL')
+```
+
+Which will automatically conduct `biclustering`and `cell type prediction`. Note that it may take quite a long time to finish, as the discretization step of the biclustering is time-consuming.
+
+Or, you may first conduct `biclustering` and then provide the output *.chars* file to the`final()`function:
+```{r discretize2,eval=FALSE}
+BRIC::qubic('Yan_RPKM',R=TRUE)
+```
+```{r two step}
+RST <-BRIC::final('Yan_RPKM.chars',d=TRUE,method='MCL') # Note that must add d=TRUE if use .chars as input
+head(RST)
+```
+
+Both ways will give you a list of predicted cell labels
+
+Note:
+
+* By default, BRIC use *MCL* clustering. You may choose spectral clustering, and if so,you also need to specify the number of cell types(e.g., 6). In that case, you need to to call the function in this way: `BRIC::final('Yan_RPKM.chars,d=TRUE,method='SC',K=6)`
+
+
+If you have reference label at hand, you can calculate some external criteria to evaluate the agreement between predicted cell labels and reference labels:
+
+
+```{r calculate ARI}
+library(mclust)
+library(clues)
+target <-read.table('Yan_cell_label.csv',header=T,sep=',')  # read reference label
+head(target)
+# judge if the cell names are consistent
+aa <-names(RST)
+bb <-target$Cell_type
+# if consistent, continue to calculate ARI ect
+if (identical(sort(aa),sort(as.character(bb)))=='TRUE'){
+  sorted <-RST[match(target$Cell_type,names(RST))] # sort the predicted label
+  ARI <-adjustedRandIndex(sorted,target$Cluster)  
+  RI <-adjustedRand(sorted,target$Cluster,randMethod='Rand')
+  FM <-adjustedRand(sorted,target$Cluster,randMethod='FM')
+  JI <-adjustedRand(sorted,target$Cluster,randMethod='Jaccard')
+  df <-data.frame(ARI=ARI, RandIndex=RI,FolkesMallow=FM, Jaccard=JI)
+  df
+}
+```
+
+
+Note
+
+* the reference labels used in this example is avaiable at <https://github.com/zy26/BRICdata/blob/master/Example%20data/Yan_cell_label.csv>
+* you may need to sort the predicted labels first
+* make sure that the cell names used in predicted label and reference labels are consistent
