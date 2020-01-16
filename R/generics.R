@@ -8,22 +8,10 @@ setGeneric(name="NormalizeData",
 #' @rdname RunLTMG
 #' @export
 setGeneric(name="RunLTMG",
-           def=function(object, NFeatures) standardGeneric("RunLTMG")
+           def=function(object,Gene_use,k=5) standardGeneric("RunLTMG")
 )
 
 
-#' @export
-#' @rdname AddNormalNoise
-setGeneric(name="AddNormalNoise",
-           def=function(object) standardGeneric("AddNormalNoise")
-)
-
-
-#' @export
-#' @rdname GetAddNormalNoise
-setGeneric(name="GetNormalNoiseMatirx",
-           def=function(object) standardGeneric("GetNormalNoiseMatirx")
-)
 
 
 #' @export

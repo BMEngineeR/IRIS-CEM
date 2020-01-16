@@ -6,11 +6,11 @@
 \alias{RunLTMG,BRIC-method}
 \title{RunLTMG}
 \usage{
-RunLTMG(object, NFeatures)
+RunLTMG(object, Gene_use, k = 5)
 
-.RunLTMG(object = NULL, NFeatures = NULL)
+.RunLTMG(object, Gene_use, k = 5)
 
-\S4method{RunLTMG}{BRIC}(object = NULL, NFeatures = NULL)
+\S4method{RunLTMG}{BRIC}(object, Gene_use, k = 5)
 }
 \value{
 

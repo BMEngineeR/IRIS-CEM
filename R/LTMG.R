@@ -1,7 +1,29 @@
 #' @include generics.R
 #' @include object.R
+#' ###################
 NULL
-#' BIC_LTMG
+
+#' @rdname MIN_return
+MIN_return<-function(x){
+  return(min(x[x>0]))
+}
+
+#' @rdname Global_Zcut
+Global_Zcut<-function(MAT) {
+  VEC<-apply(MAT, 1, MIN_return)
+  VEC<-VEC+rnorm(length(VEC),0,0.0001)
+  Zcut_univ<-0
+  tryCatch({
+    MIN_fit = normalmixEM(log(VEC),k = 2)
+    INTER<-Intersect2Mixtures(Mean1 = MIN_fit$mu[1],SD1 = MIN_fit$sigma[1],Weight1 = MIN_fit$lambda[1],
+                              Mean2 = MIN_fit$mu[2],SD2 = MIN_fit$sigma[2],Weight2 = MIN_fit$lambda[2])
+    Zcut_univ<-INTER$CutX
+  }, error=function(e){})
+
+  return(exp(Zcut_univ))
+}
+
+#' @rdname BIC_LTMG
 BIC_LTMG <- function(y, rrr, Zcut) {
   n <- length(y)
 
@@ -22,8 +44,27 @@ BIC_LTMG <- function(y, rrr, Zcut) {
   return (f)
 }
 
+#' @rdname BIC_ZIMG
+BIC_ZIMG <-function(y,rrr,Zcut){
+  y<-y[y>Zcut]
+  n<-length(y)
+  nparams <- nrow(rrr) * 3-1
+  w <- rrr[, 1]
+  u <- rrr[, 2]
+  sig <- rrr[, 3]
+  y0 <- y[which(y >= Zcut)]
+  cc <- c()
+  for (i in 1:nrow(rrr)) {
+    c <- dnorm(y0, u[i], sig[i]) * w[i]
+    cc <- rbind(cc, c)
+  }
+  d <- apply(cc, 2, sum)
+  e <- sum(log(d))
+  f <- nparams * log(n)-e*2
+  return (f)
+}
 
-#' Pure_CDF
+#' @rdname Pure_CDF
 Pure_CDF<-function(Vec){
   ### Vec should be sorted ###
   TEMP<-sort(Vec)
@@ -46,9 +87,7 @@ Pure_CDF<-function(Vec){
   return(CDF)
 }
 
-
-#' KS_LTMG
-
+#' @rdname KS_LTMG
 KS_LTMG<-function(y,rrr,Zcut){
   y<-sort(y)
   num_c<-nrow(rrr)
@@ -65,19 +104,28 @@ KS_LTMG<-function(y,rrr,Zcut){
   return(max(abs(p_x-p_uni_x)))
 }
 
-#' MIN_return
-MIN_return<-function(x){
-  return(min(x[x>0]))
+#' @rdname KS_ZIMG
+KS_ZIMG<-function(y,rrr,Zcut){
+  num_c<-nrow(rrr)
+  y0<-y[which(y>=Zcut)]
+  y0<-sort(y0)
+  p_x<-rep(0,length(y0))
+
+  for(j in 1:num_c){
+    p_x<-p_x+pnorm(y0,mean=rrr[j,2],sd=rrr[j,3])*rrr[j,1]
+  }
+
+  p_uni_x<-Pure_CDF(y0)
+  return(max(abs(p_x-p_uni_x)))
 }
 
-#' State_return
+#' @rdname State_return
 State_return<-function(x){
   return(order(x,decreasing = T)[1])
 }
 
-#' MINUS
-#' @export
-MINUS <- function(x,y){
+#' @rdname MINUS
+MINUS<-function(x,y){
   if(x<y){
     return(0)
   }else{
@@ -85,45 +133,111 @@ MINUS <- function(x,y){
   }
 }
 
+#' @rdname Fit_LTMG
+Fit_LTMG<- function(x, n, q, k, err = 1e-10) {
+  q <- max(q, min(x))
+  c <- sum(x < q)
+  x <- x[which(x >= q)]
+  if (length(x) <= k) {
+    warning(sprintf("The length of x is %i. Sorry, too little conditions\n", length(x)))
+    return(cbind(0, 0, 0))
+  }
+  mean <- c()
+  for (i in 1:k) {
+    mean <- c(mean, sort(x)[floor(i * length(x) / (k + 1))])
+  }
+  mean[1] <- min(x) - 1  # What is those two lines for?
+  mean[length(mean)] <- max(x) + 1  # Without them the result of mean[1] is slightly different.
+  p <- rep(1 / k, k)
+  sd <- rep(sqrt(var(x)), k)
+  pdf.x.portion <- matrix(0, length(x), k)
+
+  for (i in 1:n) {
+    p0 <- p
+    mean0 <- mean
+    sd0 <- sd
+
+    pdf.x.all <- t(p0 * vapply(x, function(x) dnorm(x, mean0, sd0), rep(0, k)))
+    pdf.x.portion <- pdf.x.all / rowSums(pdf.x.all)
+    cdf.q <- pnorm(q, mean0, sd0)
+    cdf.q.all <- p0 * cdf.q
+    cdf.q.portion <- cdf.q.all / sum(cdf.q.all)
+    cdf.q.portion.c <- cdf.q.portion * c
+    denom <- colSums(pdf.x.portion) + cdf.q.portion.c
+    p <- denom / (nrow(pdf.x.portion) + c)
+    im <- dnorm(q, mean0, sd0) / cdf.q * sd0
+    im[is.na(im)] <- 0
+    mean <- colSums(crossprod(x, pdf.x.portion) + (mean0 - sd0 * im) * cdf.q.portion.c) / denom
+    sd <- sqrt((colSums((x - matrix(mean0, ncol = length(mean0), nrow = length(x),
+                                    byrow = TRUE)) ^ 2 * pdf.x.portion) + sd0 ^ 2 * (1 - (q - mean0) / sd0 * im) *
+                  cdf.q.portion.c) / denom)
+    if (!is.na(match(NaN, sd))) {
+      break
+    }
+    if ((mean(abs(p - p0)) <= err) && (mean(abs(mean - mean0)) <= err) &&
+        (mean(abs(sd - sd0)) <= err)) {
+      break
+    }
+  }
+  return(cbind(p, mean, sd))
+}
+
+#' @rdname LTMG
+LTMG<-function(VEC,Zcut_G,k=5){
+  y<-log(VEC)
+  y<-y+rnorm(length(y),0,0.0001)
+  Zcut<-min(log(VEC[VEC>0]))
+  if(Zcut<Zcut_G){
+    Zcut<-Zcut_G
+  }
 
 
-# EvaluateMatrix<- function (object = NULL, ){}
-#
-.AddNormalNoise <- function (object = NULL,seed = 123){
-  set.seed(seed)
-  raw<-object@raw_count
-  raw <- as.data.frame(raw)
-  MAT<-sapply(raw,function(x) x+rnorm(1,0,0.0001))
-  MAT <- as.matrix(MAT)
-  MAT2<-MAT+matrix(rnorm(ncol(MAT)*nrow(MAT),0,0.0001),ncol=ncol(MAT),nrow=nrow(MAT))
-  MAT2 <- as.matrix(MAT2)
-  MAT3 <- ifelse(MAT2 < 0, 0, MAT2)
-  rownames(MAT3) <- rownames(raw)
-  object@LTMG@AddedNoiseMatirx <- MAT3
-  return(object)
+  if(all(VEC>Zcut_G)){
+    rrr<-matrix(c(1,mean(y[y>=Zcut]),sd(y[y>=Zcut])),nrow = 1,ncol = 3)
+    MARK<-BIC_ZIMG(y,rrr,Zcut)
+    rrr_LTMG<-rrr
+    for (K in 2:(k-1)) {
+      tryCatch({
+        mixmdl<-normalmixEM(y[y>Zcut],K)
+        rrr<-cbind(mixmdl$lambda,mixmdl$mu,mixmdl$sigma)
+        TEMP<-BIC_ZIMG(y,rrr,Zcut)
+        if(TEMP<MARK){
+          rrr_LTMG<-rrr
+          MARK<-TEMP
+        }
+      }, error=function(e){})
+    }
+    rrr_LTMG<-rbind(c(0,-Inf,0.0001),rrr_LTMG)
+  }else{
+    MARK<-Inf
+    rrr_LTMG<-NULL
+    for (K in 2:k){
+      tryCatch({
+        rrr<-Fit_LTMG(y,100,Zcut,K)
+        rrr<-matrix(as.numeric(rrr[!is.na(rrr[,2]),]),ncol=3,byrow=F)
+        TEMP<-BIC_LTMG(y,rrr,Zcut)
+        #print(TEMP)
+        if(TEMP<MARK){
+          rrr_LTMG<-rrr
+          MARK<-TEMP
+        }
+      }, error=function(e){})
+    }
+  }
+
+  rrr_LTMG<-rrr_LTMG[order(rrr_LTMG[,2]),]
+  rrr_use<-matrix(as.numeric(rrr_LTMG),ncol=3,byrow=F)
+
+  return(rrr_LTMG)
 }
 
 
-#' @export
-#' @rdname AddNormalNoise
-setMethod("AddNormalNoise", "BRIC", function (object) .AddNormalNoise(object))
 
-
-.GetNormalNoiseMatirx <- function(object = NULL) {
-  tmp <- object@LTMG@AddedNoiseMatirx
-  return(tmp)
-}
-
-
-
-#' @export
-#' @rdname GetNormalNoiseMatirx
-setMethod("GetNormalNoiseMatirx","BRIC",.GetNormalNoiseMatirx)
 # Run LTMG function --------------------------------------------------------------------
 #' RunLTMG
 #'
 #' @param object
-#' @param NFeatures
+#' @param Gene_use
 #' @name RunLTMG
 #' @return
 #' @export
@@ -132,53 +246,64 @@ setMethod("GetNormalNoiseMatirx","BRIC",.GetNormalNoiseMatirx)
 #' @importFrom mixtools normalmixEM
 #' @importFrom stats sd
 #' @examples
-.RunLTMG <- function (object = NULL, NFeatures = NULL){
-  if(nrow(object@LTMG@AddedNoiseMatirx) == 0) {
-    object <- AddNormalNoise(object)
-  }
-
-  MAT <- object@LTMG@AddedNoiseMatirx
-  if(is.null(NFeatures)){
-    print(paste("use all ", nrow(MAT)," genes"))
-  } else {
-    print(paste("Calculating and using top ",NFeatures, " variant genes"))
-    All_variance <- apply(MAT, 1, function(x) sqrt(sd(x)))
-    All_variance <- sort(All_variance, decreasing = TRUE)
-    Top_variance_name <- names(All_variance)[1:NFeatures]
-    MAT <- MAT[Top_variance_name,]
-  }
-
-  MIN<-apply(MAT, 1, MIN_return)
-  MIN<-log(MIN)
-  MIN_fit<-normalmixEM(MIN)
-  INTER<-Intersect2Mixtures(Mean1 = MIN_fit$mu[1],SD1 = MIN_fit$sigma[1],Weight1 = MIN_fit$lambda[1],
-                            Mean2 = MIN_fit$mu[2],SD2 = MIN_fit$sigma[2],Weight2 = MIN_fit$lambda[2])
-  Zcut_univ<-INTER$CutX
+.RunLTMG <- function(object,Gene_use,k=5){
+  MAT <- object@raw_count
+  Zcut_G <- log(Global_Zcut(MAT))
+  LTMG_Res<-data.frame()
+  gene_name<-c()
+  MAT<-MAT[rowSums(MAT)>0,colSums(MAT)>0]
+  SEQ<-floor(seq(from = 1,to = length(Gene_use),length.out = 11))
 
 
-  MAT_state<-MAT*0
-  MAT<-as.matrix(MAT)
-  pb <- txtProgressBar(min = 0, max = nrow(MAT), style = 3)
-  for (i in 1:nrow(MAT)) {
-    VEC<-MAT[i,]
-    y<-log(VEC)
-    Zcut<-min(log(VEC[VEC>0]))
-    if(Zcut<Zcut_univ){
-      Zcut<-Zcut_univ
+  for (i in 1:length(Gene_use)) {
+
+    if(i %in% SEQ){
+      cat(paste0("Progress:",(grep("T",SEQ==i)-1)*10,"%\n" ))
     }
 
-    MARK<-Inf
-    rrr_LTMG<-NULL
-    for (K in 1:5) {
-      rrr<-SeparateKRpkmNew(x = y,n = 100,q = Zcut,k = K)
-      rrr<-matrix(as.numeric(rrr[!is.na(rrr[,2]),]),ncol=3,byrow=F)
-      TEMP<-BIC_LTMG(y,rrr,Zcut)
-      #print(TEMP)
-      if(TEMP<MARK){
-        rrr_LTMG<-rrr
-        MARK<-TEMP
+    VEC<-MAT[Gene_use[i],]
+    cell.name <- colnames(MAT)
+    y<-log(VEC)
+    y<-y+rnorm(length(y),0,0.0001)
+    Zcut<-min(log(VEC[VEC>0]))
+    if(Zcut<Zcut_G){
+      Zcut<-Zcut_G
+    }
+
+    if(all(VEC>Zcut_G)){
+      rrr<-matrix(c(1,mean(y[y>=Zcut]),sd(y[y>=Zcut])),nrow = 1,ncol = 3)
+      MARK<-BIC_ZIMG(y,rrr,Zcut)
+      rrr_LTMG<-rrr
+      for (K in 2:(k-1)) {
+        tryCatch({
+          mixmdl<-normalmixEM(y[y>Zcut],K)
+          rrr<-cbind(mixmdl$lambda,mixmdl$mu,mixmdl$sigma)
+          TEMP<-BIC_ZIMG(y,rrr,Zcut)
+          if(TEMP<MARK){
+            rrr_LTMG<-rrr
+            MARK<-TEMP
+          }
+        }, error=function(e){})
+      }
+      rrr_LTMG<-rbind(c(0,-Inf,0.0001),rrr_LTMG)
+    }else{
+      MARK<-Inf
+      rrr_LTMG<-NULL
+      for (K in 2:k){
+        tryCatch({
+          rrr<-Fit_LTMG(y,100,Zcut,K)
+          rrr<-matrix(as.numeric(rrr[!is.na(rrr[,2]),]),ncol=3,byrow=F)
+          TEMP<-BIC_LTMG(y,rrr,Zcut)
+          #print(TEMP)
+          if(TEMP<MARK){
+            rrr_LTMG<-rrr
+            MARK<-TEMP
+          }
+        }, error=function(e){})
       }
     }
+    print(i)
+    if(is.null(rrr_LTMG)){next()}
 
     rrr_LTMG<-rrr_LTMG[order(rrr_LTMG[,2]),]
     rrr_use<-matrix(as.numeric(rrr_LTMG),ncol=3,byrow=F)
@@ -192,14 +317,16 @@ setMethod("GetNormalNoiseMatirx","BRIC",.GetNormalNoiseMatirx)
     y_state<-rep(0,length(y))
     y_state[y>Zcut]<-apply(y_value,2,State_return)-1
 
-    MAT_state[i,]<-y_state
-    setTxtProgressBar(pb, i)
+    LTMG_Res<-rbind(LTMG_Res,y_state)
+    gene_name<-c(gene_name,Gene_use[i])
+
   }
-  close(pb)
-  object@LTMG@LTMG_discrete <- as.matrix(MAT_state)
+  rownames(LTMG_Res)<-gene_name
+  colnames(LTMG_Res) <- cell.name
+  LTMG_Res<-as.matrix(LTMG_Res)
+  object@LTMG@LTMG_discrete <- LTMG_Res
   return(object)
 }
-
 
 #' @export
 #' @rdname RunLTMG

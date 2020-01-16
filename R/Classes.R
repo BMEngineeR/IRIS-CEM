@@ -11,7 +11,6 @@
 #'
 #' @examples
 setClass("LTMGr", slots = c(
-  AddedNoiseMatirx = "matrix",
   LTMG_discrete = "matrix",
   LTMG_BinarySingleSignal = "matrix",
   LTMG_BinaryMultisignal = "matrix"
