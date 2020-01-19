@@ -12,12 +12,6 @@ setGeneric(name="RunLTMG",
 )
 
 
-#' @export
-#' @rdname AddNormalNoise
-setGeneric(name="AddNormalNoise",
-           def=function(object) standardGeneric("AddNormalNoise")
-)
-
 
 #' @export
 #' @rdname GetAddNormalNoise

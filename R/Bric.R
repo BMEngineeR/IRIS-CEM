@@ -33,7 +33,15 @@ qubic <- function(i, N = FALSE, R = FALSE, F = FALSE, d = FALSE, D = FALSE, n = 
   tmp.dir <- paste(getwd(),"/tmp_expression.txt")
   write.table(object@raw_count, file = tmp.dir, row.names = T, quote = F, sep = "\t")
   qubic(i = tmp.dir, Fa = TRUE, q = 0.05)
-  tmp
+  tmp.chars <- paste(getwd(),"/tmp_expression.txt.chars")
+  tmp.readin <- read.table(tmp.chars, row.names = 1, header = T)
+  object@Discretization <- as.matrix(tmp.readin)
+  return(object)
 }
 
 setMethod("RunDiscretization","BRIC",.runDiscretization)
+
+
+
+
+

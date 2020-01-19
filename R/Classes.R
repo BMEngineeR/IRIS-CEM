@@ -49,6 +49,7 @@ setClass("Bicluster", slots = c(
 setClass("BRIC",
          slots=c(raw_count = "matrix",
                  processed_count = "matrix",
+                 Discretization = "matrix",
                  LTMG = "LTMGr",
                  BiCluster = "Bicluster"
          )
