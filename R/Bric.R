@@ -1,14 +1,14 @@
+
 #' @describeIn QUBIC Performs a QUalitative BIClustering.
 #'
 #' @usage qubic(i, R = FALSE, F = FALSE, d = FALSE, f = 0.85, k = 13, c = 0.90, o = 5000)
 #'
 #' @importFrom Rcpp evalCpp
-#' @export
-qubic <- function(i, N = FALSE, R = FALSE, F = FALSE, d = FALSE, D = FALSE, n = FALSE, f = 0.85, k = 13, c = 0.90, o = 5000) {
+qubic <- function(i, N = FALSE, R = FALSE, Fa = FALSE, d = FALSE, D = FALSE, n = FALSE, f = 0.85, k = 13, c = 0.90, o = 5000) {
   vec <- c("./qubic", "-i", i)
   if(N) vec <- c(vec, "-N")
   if(R) vec <- c(vec, "-R")
-  if(F) vec <- c(vec, "-F")
+  if(Fa) vec <- c(vec, "-F")
   if(d) vec <- c(vec, "-d")
   if(D) vec <- c(vec, "-D")
   if(n) vec <- c(vec, "-n")
@@ -23,6 +23,33 @@ qubic <- function(i, N = FALSE, R = FALSE, F = FALSE, d = FALSE, D = FALSE, n = 
   return (ret)
 }
 
+
 .onUnload <- function (libpath) {
   library.dynam.unload("BRIC", libpath)
 }
+
+
+#' RunDiscretization
+#'
+#' @param object
+#' @param q
+#'
+#' @return
+#' @export
+#'
+
+.runDiscretization <- function(object = obejct, q = 0.05){
+  print("writing tmp expression file ...")
+  tmp.dir <- paste(getwd(),"/tmp_expression.txt")
+  write.table(object@raw_count, file = tmp.dir, row.names = T, quote = F, sep = "\t")
+  qubic(i = tmp.dir, Fa = TRUE, q = 0.05)
+  tmp
+}
+
+setMethod("RunDiscretization","BRIC",.runDiscretization)
+
+
+
+
+
+

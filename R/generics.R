@@ -55,7 +55,10 @@ setGeneric(name = "GetBinaryMultiSignal",
            def = function(object) standardGeneric("GetBinaryMultiSignal"))
 
 
-
+#' @export
+#' @rdname RunDiscretization
+setGeneric(name = "RunDiscretization",
+           def = function(object) standardGeneric("RunDiscretization"))
 
 
 

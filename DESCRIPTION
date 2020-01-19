@@ -3,8 +3,8 @@ Type: Package
 Title: What the Package Does in One 'Title Case' Line
 Version: 1.0
 Date: 2019-02-15
-Author: Yu Zhang
-Maintainer: Yu Zhang <zy26@jlu.edu.cn>
+Author: Yuzhou Chang
+Maintainer: Yuzhou Chang <yuzhou.chang@osumc.edu>
 Description: One paragraph description of what the package does as one or more full sentences.
 License: CC BY-NC-ND 4.0 + file LICENSE
 Imports: Rcpp (>= 1.0.0), MCL, anocva, igraph
