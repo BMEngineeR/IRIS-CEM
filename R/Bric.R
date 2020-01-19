@@ -26,3 +26,14 @@ qubic <- function(i, N = FALSE, R = FALSE, F = FALSE, d = FALSE, D = FALSE, n = 
 .onUnload <- function (libpath) {
   library.dynam.unload("BRIC", libpath)
 }
+
+
+.runDiscretization <- function(object = obejct, q = 0.05){
+  print("writing tmp expression file ...")
+  tmp.dir <- paste(getwd(),"/tmp_expression.txt")
+  write.table(object@raw_count, file = tmp.dir, row.names = T, quote = F, sep = "\t")
+  qubic(i = tmp.dir, Fa = TRUE, q = 0.05)
+  tmp
+}
+
+setMethod("RunDiscretization","BRIC",.runDiscretization)
