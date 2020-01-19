@@ -8,10 +8,22 @@ setGeneric(name="NormalizeData",
 #' @rdname RunLTMG
 #' @export
 setGeneric(name="RunLTMG",
-           def=function(object,Gene_use,k=5) standardGeneric("RunLTMG")
+           def=function(object, NFeatures) standardGeneric("RunLTMG")
 )
 
 
+#' @export
+#' @rdname AddNormalNoise
+setGeneric(name="AddNormalNoise",
+           def=function(object) standardGeneric("AddNormalNoise")
+)
+
+
+#' @export
+#' @rdname GetAddNormalNoise
+setGeneric(name="GetNormalNoiseMatirx",
+           def=function(object) standardGeneric("GetNormalNoiseMatirx")
+)
 
 
 #' @export
@@ -19,16 +31,6 @@ setGeneric(name="RunLTMG",
 setGeneric(name = "GetLTMGmatrix",
            def = function(object) standardGeneric("GetLTMGmatrix"))
 
-#' @export
-#' @rdname CalBinarySingleSignal
-setGeneric(name = "CalBinarySingleSignal",
-           def = function(object) standardGeneric("CalBinarySingleSignal"))
-
-
-#' @export
-#' @rdname CalBinarySingleSignal
-setGeneric(name = "GetBinarySingleSignal",
-           def = function(object) standardGeneric("GetBinarySingleSignal"))
 
 
 #' @export
@@ -43,7 +45,10 @@ setGeneric(name = "GetBinaryMultiSignal",
            def = function(object) standardGeneric("GetBinaryMultiSignal"))
 
 
-
+#' @export
+#' @rdname RunDiscretization
+setGeneric(name = "RunDiscretization",
+           def = function(object) standardGeneric("RunDiscretization"))
 
 
 
