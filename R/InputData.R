@@ -30,7 +30,7 @@ ReadFrom10X_h5<-function(input=NULL,...){
 #' @examples
 ReadFrom10X_folder <- function(input.dir=NULL,...){
   Input_10X <- Read10X(input.dir)
-  Gene_expression <- input_10X
+  Gene_expression <- Input_10X
   return(Gene_expression)
 }
 

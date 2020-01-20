@@ -8,10 +8,10 @@ NULL
 #'
 #' @examples
 .runDiscretization <- function(object = NULL, q = 0.05, LogTransformation = FALSE){
-  print("writing temporary expression file ...")
+  message("writing temporary expression file ...")
   tmp.dir <- paste0(getwd(),"/tmp_expression.txt")
   write.table(object@processed_count, file = tmp.dir, row.names = T, quote = F, sep = "\t")
-  print("create temporary discretize file")
+  message("create temporary discretize file")
   qubic(i = tmp.dir, Fa = TRUE, q = q, R = LogTransformation)
   tmp.chars <- paste0(getwd(),"/tmp_expression.txt.chars")
   tmp.readin <- read.table(tmp.chars, row.names = 1, header = T)

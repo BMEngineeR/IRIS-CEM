@@ -37,7 +37,6 @@ NULL
 
 
   my.imputated.data <- as.sparse(my.imputated.data)
-  my.imputated.data <- log1p(my.imputated.data)
   object@processed_count <- my.imputated.data
   return(object)
 }
