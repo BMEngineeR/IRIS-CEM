@@ -247,6 +247,7 @@ LTMG<-function(VEC,Zcut_G,k=5){
 #' @examples
 .RunLTMG <- function(object,Gene_use = NULL, seed = 123, k = 5){
   MAT <- as.matrix(object@processed_count)
+  set.seed(seed)
   Zcut_G <- log(Global_Zcut(MAT))
   LTMG_Res<-data.frame()
   gene_name<-c()
