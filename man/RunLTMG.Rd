@@ -6,11 +6,14 @@
 \alias{RunLTMG,BRIC-method}
 \title{RunLTMG}
 \usage{
-RunLTMG(object, Gene_use, k = 5)
+RunLTMG(object, ...)
 
-.RunLTMG(object, Gene_use, k = 5)
+.RunLTMG(object, Gene_use = NULL, k = 5)
 
-\S4method{RunLTMG}{BRIC}(object, Gene_use, k = 5)
+\S4method{RunLTMG}{BRIC}(object, Gene_use = NULL, k = 5)
+}
+\arguments{
+\item{Gene_use}{using X numebr of top variant gene. input a number, recommend 2000.}
 }
 \value{
 

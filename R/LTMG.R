@@ -1,6 +1,6 @@
 #' @include generics.R
 #' @include object.R
-#' ###################
+#' @include Classes.R
 NULL
 
 #' @rdname MIN_return
@@ -237,31 +237,35 @@ LTMG<-function(VEC,Zcut_G,k=5){
 #' RunLTMG
 #'
 #' @param object
-#' @param Gene_use
+#' @param Gene_use using X numebr of top variant gene. input a number, recommend 2000.
 #' @name RunLTMG
 #' @return
-#' @export
 #' @importFrom AdaptGauss Intersect2Mixtures
 #' @importFrom LTMGSCA SeparateKRpkmNew
 #' @importFrom mixtools normalmixEM
 #' @importFrom stats sd
 #' @examples
-.RunLTMG <- function(object,Gene_use,k=5){
-  MAT <- object@raw_count
+.RunLTMG <- function(object,Gene_use = NULL, seed = 123, k = 5){
+  MAT <- as.matrix(object@processed_count)
   Zcut_G <- log(Global_Zcut(MAT))
   LTMG_Res<-data.frame()
   gene_name<-c()
   MAT<-MAT[rowSums(MAT)>0,colSums(MAT)>0]
-  SEQ<-floor(seq(from = 1,to = length(Gene_use),length.out = 11))
+  if (is.null(Gene_use)){
+    Gene_use_name <- rownames(MAT)
+  } else{
+    Gene_use_name <-rownames(MAT)[order(apply(MAT, 1, var),decreasing = T)[1:Gene_use]]
+  }
 
+  SEQ<-floor(seq(from = 1,to = length(Gene_use_name),length.out = 11))
 
-  for (i in 1:length(Gene_use)) {
+  for (i in 1:length(Gene_use_name)) {
 
     if(i %in% SEQ){
       cat(paste0("Progress:",(grep("T",SEQ==i)-1)*10,"%\n" ))
     }
-
-    VEC<-MAT[Gene_use[i],]
+    set.seed(seed)
+    VEC<-MAT[Gene_use_name[i],]
     cell.name <- colnames(MAT)
     y<-log(VEC)
     y<-y+rnorm(length(y),0,0.0001)
@@ -302,7 +306,6 @@ LTMG<-function(VEC,Zcut_G,k=5){
         }, error=function(e){})
       }
     }
-    print(i)
     if(is.null(rrr_LTMG)){next()}
 
     rrr_LTMG<-rrr_LTMG[order(rrr_LTMG[,2]),]
@@ -318,7 +321,7 @@ LTMG<-function(VEC,Zcut_G,k=5){
     y_state[y>Zcut]<-apply(y_value,2,State_return)-1
 
     LTMG_Res<-rbind(LTMG_Res,y_state)
-    gene_name<-c(gene_name,Gene_use[i])
+    gene_name<-c(gene_name,Gene_use_name[i])
 
   }
   rownames(LTMG_Res)<-gene_name

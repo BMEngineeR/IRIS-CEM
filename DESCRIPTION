@@ -11,13 +11,13 @@ Imports: Rcpp (>= 1.0.0), MCL, anocva, igraph
 LinkingTo: Rcpp
 RoxygenNote: 7.0.2
 Collate: 
+    'Classes.R'
+    'generics.R'
     'Bicluster.R'
     'Bric.R'
     'CellTypePrediction.R'
-    'Classes.R'
     'InputData.R'
     'object.R'
-    'generics.R'
     'LTMG.R'
     'NormalizeData.R'
     'PreprocessData.R'

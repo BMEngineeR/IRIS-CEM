@@ -48,7 +48,7 @@ setClass("Bicluster", slots = c(
 #' @exportClass BRIC
 setClass("BRIC",
          slots=c(raw_count = "matrix",
-                 processed_count = "matrix",
+                 processed_count = "ANY",
                  Discretization = "matrix",
                  LTMG = "LTMGr",
                  BiCluster = "Bicluster"
