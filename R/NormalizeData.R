@@ -1,6 +1,6 @@
 #' @include generics.R
 NULL
-#' Title
+#' Normarlize data
 #'
 #' @param Input
 #' @param IsImputation
@@ -21,7 +21,7 @@ NULL
     sce <- scater::normalize(sce,return_log=F)
     my.normalized.data <- normcounts(sce)
   } else {
-    my.normalized.data <- input
+    my.normalized.data <- Input
 
   }
 

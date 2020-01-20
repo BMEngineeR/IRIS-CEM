@@ -11,7 +11,6 @@
 #'
 #' @examples
 setClass("LTMGr", slots = c(
-  AddedNoiseMatirx = "matrix",
   LTMG_discrete = "matrix",
   LTMG_BinarySingleSignal = "matrix",
   LTMG_BinaryMultisignal = "matrix"
@@ -49,8 +48,8 @@ setClass("Bicluster", slots = c(
 #' @exportClass BRIC
 setClass("BRIC",
          slots=c(raw_count = "matrix",
-                 processed_count = "matrix",
-                 Discretization = "matrix"
+                 processed_count = "ANY",
+                 Discretization = "matrix",
                  LTMG = "LTMGr",
                  BiCluster = "Bicluster"
          )
