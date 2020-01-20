@@ -26,6 +26,7 @@ qubic <- function(i = NULL, N = FALSE, R = FALSE, Fa = FALSE, d = FALSE, D = FAL
   return (ret)
 }
 
+
 .onUnload <- function (libpath) {
   library.dynam.unload("BRIC", libpath)
 }

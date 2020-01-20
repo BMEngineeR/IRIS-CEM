@@ -1,5 +1,3 @@
 # BRIC
 
-BRIC is a novel biclustering method for the detection of the repertoire of active gene regulatory signals(GRSs) within each single cell, based on which, we annotate the type and/or physiological state of each cell.
-
-For more details, please refer to the [tutorial](http://htmlpreview.github.io/?https://github.com/zy26/BRIC/blob/master/vignette/BRIC_Rpackage.html)
+BRIC provides an R environment for integrating [LTMG](https://academic.oup.com/nar/article/47/18/e111/5542876) and [QUBIC2](https://academic.oup.com/bioinformatics/advance-article/doi/10.1093/bioinformatics/btz692/5567116)
