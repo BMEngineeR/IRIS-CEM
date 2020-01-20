@@ -20,6 +20,5 @@ Collate:
     'object.R'
     'LTMG.R'
     'NormalizeData.R'
-    'PreprocessData.R'
     'RcppExports.R'
     'hello.R'

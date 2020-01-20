@@ -71,7 +71,7 @@ setMethod("RunDiscretization", "BRIC", .runDiscretization)
 #' @param NumBlockOutput
 #' @param BlockOverlap
 #' @param BlockCellMin
-#'
+#' @name RunBicluster
 #' @return
 #' @examples
 .runBicluster <- function(object = NULL, DiscretizationModel = "LTMG",OpenDual = TRUE, Extension = 0.90,
