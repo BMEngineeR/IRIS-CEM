@@ -76,12 +76,12 @@ setMethod("RunDiscretization", "BRIC", .runDiscretization)
 #' @examples
 .runBicluster <- function(object = NULL, DiscretizationModel = "LTMG",OpenDual = TRUE, Extension = 0.90,
                           NumBlockOutput = 100, BlockOverlap = 0.7, BlockCellMin = 15) {
-  if(DiscretizationModel != "LTMG" && DiscretizationModel != "Quatile"){stop("please select either LTMG or Quatile")}
+  if(DiscretizationModel != "LTMG" && DiscretizationModel != "Quantile"){stop("please select either LTMG or Quantile")}
   if(DiscretizationModel == "LTMG") {
     .runBiclusterBaseOnLTMG(object = object, OpenDual = OpenDual, Extension = Extension,
                                       NumBlockOutput = NumBlockOutput, BlockOverlap = BlockOverlap, BlockCellMin = BlockCellMin)
   }
-  if(DiscretizationModel == "Quatile") {
+  if(DiscretizationModel == "Quantile") {
     .runBiclusterBaseOnDiscretization(object = object, OpenDual = OpenDual, Extension = Extension,
                                       NumBlockOutput = NumBlockOutput, BlockOverlap = BlockOverlap, BlockCellMin = BlockCellMin)
   }
