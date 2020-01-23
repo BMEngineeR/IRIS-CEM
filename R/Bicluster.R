@@ -10,7 +10,9 @@ NULL
 .runDiscretization <- function(object = NULL, q = 0.05, LogTransformation = FALSE){
   message("writing temporary expression file ...")
   tmp.dir <- paste0(getwd(),"/tmp_expression.txt")
-  write.table(object@processed_count, file = tmp.dir, row.names = T, quote = F, sep = "\t")
+  tmp.count<- object@processed_count
+  tmp.count <- cbind(ID=rownames(tmp.count),tmp.count)
+  write.table(tmp.count, file = tmp.dir, row.names = F, quote = F, sep = "\t")
   message("create temporary discretize file")
   qubic(i = tmp.dir, Fa = TRUE, q = q, R = LogTransformation)
   tmp.chars <- paste0(getwd(),"/tmp_expression.txt.chars")
@@ -38,7 +40,9 @@ setMethod("RunDiscretization", "BRIC", .runDiscretization)
                                     NumBlockOutput = 100, BlockOverlap = 0.7, BlockCellMin = 15) {
   print("writing LTMG Discretization file ...")
   tmp.dir <- paste0(getwd(),"/LTMG.chars")
-  write.table(object@LTMG@LTMG_BinaryMultisignal, file = tmp.dir, row.names = T, quote = F, sep = "\t")
+  tmp.multi <- object@LTMG@LTMG_BinaryMultisignal
+  tmp.multi <- cbind(ID = rownames(tmp.multi),tmp.multi)
+  write.table(object@LTMG@LTMG_BinaryMultisignal, file = tmp.dir, row.names = F, quote = F, sep = "\t")
   print("finsished!")
   print("running Bicluster . . .")
   qubic(i= tmp.dir, d = TRUE, C = OpenDual, c = Extension, o = NumBlockOutput, f= BlockOverlap, k = BlockCellMin)
