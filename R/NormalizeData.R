@@ -13,13 +13,17 @@ NULL
 #' @importFrom Seurat as.sparse
 #' @importFrom DrImpute DrImpute
 
-.NormalizeData <- function(object = NULL, IsImputation = FALSE){
+.NormalizeData <- function(object = NULL, IsScaterNormal=F,IsImputation = FALSE){
   Input <- object@raw_count
   if(all(as.numeric(unlist(Input[nrow(Input),]))%%1==0)){
     ## normalization##############################
-    sce <- tryCatch(computeSumFactors(sce),error = function(e) normalizeSCE(sce))
-    sce <- scater::normalize(sce,return_log=F)
-    my.normalized.data <- normcounts(sce)
+    if (IsScaterNormal == FALSE) {
+      my.normalized.data <- Input
+    } else{
+      sce <- tryCatch(computeSumFactors(sce),error = function(e) normalizeSCE(sce))
+      sce <- scater::normalize(sce,return_log=F)
+      my.normalized.data <- normcounts(sce)
+    }
   } else {
     my.normalized.data <- Input
 
