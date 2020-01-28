@@ -13,7 +13,7 @@ NULL
 #' @importFrom Seurat as.sparse
 #' @importFrom DrImpute DrImpute
 
-.NormalizeData <- function(object = NULL, IsScaterNormal=F,IsImputation = FALSE){
+.NormalizeData <- function(object = NULL, IsScaterNormal=FALSE, IsImputation = FALSE){
   Input <- object@raw_count
   if(all(as.numeric(unlist(Input[nrow(Input),]))%%1==0)){
     ## normalization##############################

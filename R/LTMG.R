@@ -263,7 +263,7 @@ LTMG<-function(VEC,Zcut_G,k=5){
 
   set.seed(seed)
   for (i in 1:length(Gene_use_name)) {
-
+  print(i)
     if(i %in% SEQ){
       cat(paste0("Progress:",(grep("T",SEQ==i)-1)*10,"%\n" ))
     }
@@ -309,9 +309,10 @@ LTMG<-function(VEC,Zcut_G,k=5){
         }, error=function(e){})
       }
     }
-
-    if(min(dim(rrr_LTMG))==1){
-      y_state<-rep(1,length(y))
+    if(is.null(rrr_LTMG)){
+      y_state<-rep(0,length(y))
+    }else if(min(dim(rrr_LTMG))==1){
+      y_state<-rep(0,length(y))
     }else{
       rrr_LTMG<-rrr_LTMG[order(rrr_LTMG[,2]),]
       rrr_use<-matrix(as.numeric(rrr_LTMG),ncol=3,byrow=F)
@@ -382,6 +383,7 @@ setMethod("GetBinarySingleSignal", "BRIC", .GetBinarySingleSignal)
       tmp.gene<-x[i,]
       tmp.gene.name<-rownames(x)[i]
       tmp.signal<-max(tmp.gene)
+      tmp.signal.min <- min(tmp.gene)
       sub.MultiSig<-c()
       for (j in 1:tmp.signal) {
         tmp.sub.ms<-ifelse(tmp.gene==j,1,0)
