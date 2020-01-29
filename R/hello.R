@@ -61,7 +61,7 @@
 # #             quote = F, row.names = F,sep = "\t")
 # # }
 # #
-# # # # run all samples
+# # # # # run all samples
 # setwd("/analysis_work/xudong/FInished_LTMG/LTMG/")
 # my.path <- read.table("myfile",stringsAsFactors = F)
 # my.path <- my.path$V1[-13]
@@ -69,28 +69,26 @@
 # for (i in 2:length(my.path)){
 #   setwd(paste0("/analysis_work/xudong/FInished_LTMG/LTMG/",my.path[i]))
 #   a <- read.csv("genesymble_expression.csv",header = T, row.names = 1,check.names = F)
-#   a <- t(a)
+#   # a <- t(a)
 #   a[1:5,1:5]
 #   object<-CreateBRICObject(as.matrix(a))
 #   object <- BRIC::NormalizeData(object)
 #   object <- BRIC::RunLTMG(object)
-#   object <- BRIC::CalBinaryMultiSignal(object)
-#   object <- BRIC::CalBinarySingleSignal(object)
 #   SignalMatirx <- cbind(ID=rownames(object@LTMG@LTMG_discrete),object@LTMG@LTMG_discrete)
 #   write.table(SignalMatirx,
-#               file = paste0("/analysis_work/xudong/FInished_LTMG/LTMG/",my.path[i],"/",my.path[i],"Discretization_LTMG.txt"),
+#               file = paste0("/analysis_work/xudong/FInished_LTMG/LTMG/",my.path[i],"/",my.path[i],"_Discretization_LTMG.txt"),
 #               quote = F, row.names = F,sep = "\t")
-#   Onesign<- cbind(ID=rownames(object@LTMG@LTMG_BinarySingleSignal),object@LTMG@LTMG_BinarySingleSignal)
-#   write.table(Onesign,
-#               file = paste0("/analysis_work/xudong/FInished_LTMG/LTMG/",my.path[i],"/",my.path[i],"OneSign_LTMG.txt"),
-#               quote = F, row.names = F,sep = "\t")
-#   multiSig <- cbind(ID=rownames(object@LTMG@LTMG_BinaryMultisignal),object@LTMG@LTMG_BinaryMultisignal)
-#   write.table(multiSig,
-#               file = paste0("/analysis_work/xudong/FInished_LTMG/LTMG/",my.path[i],"/",my.path[i],"MultiSignal_LTMG.txt"),
-#               quote = F, row.names = F,sep = "\t")
+# #   Onesign<- cbind(ID=rownames(object@LTMG@LTMG_BinarySingleSignal),object@LTMG@LTMG_BinarySingleSignal)
+# #   write.table(Onesign,
+# #               file = paste0("/analysis_work/xudong/FInished_LTMG/LTMG/",my.path[i],"/",my.path[i],"_OneSign_LTMG.txt"),
+# #               quote = F, row.names = F,sep = "\t")
+# #   multiSig <- cbind(ID=rownames(object@LTMG@LTMG_BinaryMultisignal),object@LTMG@LTMG_BinaryMultisignal)
+# #   write.table(multiSig,
+# #               file = paste0("/analysis_work/xudong/FInished_LTMG/LTMG/",my.path[i],"/",my.path[i],"_MultiSignal_LTMG.txt"),
+# #               quote = F, row.names = F,sep = "\t")
 # }
-#
-#
-#
-#
-#
+
+
+
+
+
