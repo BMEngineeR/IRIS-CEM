@@ -1,36 +1,45 @@
+
+#' Create DimRduce object
+#'
+#' @slot PCA ANY.
+#' @slot UMAP ANY.
+#' @slot TSNE ANY.
+#'
+#'
+setClass("DimReduce",slots = c(
+  PCA = "ANY",
+  UMAP = "ANY",
+  TSNE = "ANY"
+)
+)
+# create Bicluster object
+#'
+#' @slot block ANY.
+#' @slot CoReg_gene ANY.
+#' @slot CoCond_cell ANY.
+#'
+
+setClass("Bicluster", slots = c(
+  CoReg_gene = "ANY",
+  CoCond_cell = "ANY",
+  Pathway = "ANY"
+)
+)
 # create LTMG object
-#' Title
 #'
 #' @slot LTMG_discrete matrix.
 #' @slot LTMG_BinarySingleSignal matrix.
 #' @slot LTMG_BinaryMultisignal matrix.
 #' @slot  .
 #'
-#' @return
-#' @export
-#'
-#' @examples
 setClass("LTMGr", slots = c(
   LTMG_discrete = "matrix",
   LTMG_BinarySingleSignal = "matrix",
-  LTMG_BinaryMultisignal = "matrix"
-)
-)
-# create Bicluster object
-#' Title
-#'
-#' @slot block ANY.
-#' @slot CoReg_gene ANY.
-#' @slot CoCond_cell ANY.
-#'
-#' @return
-#' @export
-#'
-#' @examples
-setClass("Bicluster", slots = c(
-  block = "ANY",
-  CoReg_gene = "ANY",
-  CoCond_cell = "ANY"
+  LTMG_BinaryMultisignal = "matrix",
+  DimReduce = "DimReduce",
+  Cluster = "ANY",
+  MarkerGene = "ANY",
+  Pathway = "ANY"
 )
 )
 # set BRIC class
@@ -49,9 +58,10 @@ setClass("Bicluster", slots = c(
 setClass("BRIC",
          slots=c(raw_count = "matrix",
                  processed_count = "ANY",
+                 MetaInfo = "ANY",
                  Discretization = "matrix",
                  LTMG = "LTMGr",
-                 BiCluster = "Bicluster"
+                 BiCluster = "Bicluster",
          )
 
 )

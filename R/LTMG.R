@@ -1,5 +1,4 @@
 #' @include generics.R
-#' @include object.R
 #' @include Classes.R
 NULL
 

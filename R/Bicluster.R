@@ -1,6 +1,35 @@
 #' @include generics.R
 #' @include Classes.R
 NULL
+
+#' getblock function
+#'
+#' @param keyword
+#'
+.getBlock <-function( keyword = "Conds"){
+  tmp.block <- readLines(paste0(getwd(),"/tmp_expression.txt.chars.blocks"))
+  tmp.bc <-grep(keyword, tmp.block, value = T)
+  tmp.cel.module <- sapply(strsplit(tmp.bc,':',2),'[',2)
+  CONDS <-as.character()   # store the conditions
+  label_C <-as.numeric()   # store the occurence of one condistions
+
+  for (j in 1:length(tmp.cel.module)){
+    BCcond <-unlist(strsplit(tmp.cel.module[j], split = " "))
+    BCcond <-BCcond[BCcond!=""]  # exclude the blank string
+    CONDS <-c(BCcond,CONDS)
+    label_C <-c(label_C,rep(j,length(BCcond)))
+  }
+  df_C <-data.frame(cell_name=CONDS,Condition=label_C)
+  if(keyword == "Conds"){
+    object@BiCluster@CoCond_cell <- df_C
+    return(object)
+  } else if(keyword == "Genes"){
+    object@BiCluster@CoReg_gene <- df_C
+    return(object)
+  }
+
+}
+
 #' run discretization
 #'
 #' @param object
@@ -39,13 +68,16 @@ setMethod("RunDiscretization", "BRIC", .runDiscretization)
 .runBiclusterBaseOnLTMG <- function(object = NULL, OpenDual = TRUE, Extension = 0.90,
                                     NumBlockOutput = 100, BlockOverlap = 0.7, BlockCellMin = 15) {
   print("writing LTMG Discretization file ...")
-  tmp.dir <- paste0(getwd(),"/LTMG.chars")
+  tmp.dir <- paste0(getwd(),"/tmp_expression.txt.chars")
   tmp.multi <- object@LTMG@LTMG_BinaryMultisignal
   tmp.multi <- cbind(ID = rownames(tmp.multi),tmp.multi)
   write.table(object@LTMG@LTMG_BinaryMultisignal, file = tmp.dir, row.names = F, quote = F, sep = "\t")
   print("finsished!")
   print("running Bicluster . . .")
   qubic(i= tmp.dir, d = TRUE, C = OpenDual, c = Extension, o = NumBlockOutput, f= BlockOverlap, k = BlockCellMin)
+  object<-.getBlock(keyword = "Conds")
+  object <-.getBlock(keyword = "Genes")
+  return(object)
 }
 
 #' Title
@@ -64,6 +96,9 @@ setMethod("RunDiscretization", "BRIC", .runDiscretization)
     qubic(i= tmp.dir, d = TRUE, C = OpenDual, c = Extension, o = NumBlockOutput, f= BlockOverlap, k = BlockCellMin)
   } else{print("please use `RunDiscretization` first and then execute this command")}
 
+  object<-.getBlock(keyword = "Conds")
+  object <-.getBlock(keyword = "Genes")
+  return(object)
 }
 
 #' Run cluster
