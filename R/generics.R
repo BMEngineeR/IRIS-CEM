@@ -5,6 +5,11 @@ setGeneric(name="NormalizeData",
 )
 
 
+#' @export
+#' @rdname AddMeta
+setGeneric(name = "AddMeta",
+           def =function(object, ...) standardGeneric("AddMeta"))
+
 #' @rdname RunLTMG
 #' @export
 setGeneric(name="RunLTMG",
@@ -61,7 +66,23 @@ setGeneric(name = "RunDiscretization",
 setGeneric(name = "RunBicluster",
            def = function(object, ...) standardGeneric("RunBicluster"))
 
+# LTMG series
+
+#' @export
+#' @rdname RunDimensionReduction
+setGeneric(name = "RunDimensionReduction",
+           def =function(object, ...) standardGeneric("RunDimensionReduction"))
 
 
+#' @export
+#' @rdname RunClassification
+setGeneric(name = "RunClassification",
+           def =function(object, ...) standardGeneric("RunClassification"))
+
+
+#' @export
+#' @rdname FindMarkers
+setGeneric(name = "FindMarkers",
+           def =function(object, ...) standardGeneric("FindMarkers"))
 
 

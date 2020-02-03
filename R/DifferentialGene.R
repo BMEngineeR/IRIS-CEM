@@ -4,9 +4,49 @@ NULL
 
 #' @importFrom DEsingle DEsingle
 #'
-.findTwoGroupsMarker <- function(object, group.1 = NULL, group.2 =NULL){
+.findMarkers <- function(object, FDR = 0.05){
   # two group number as factor.
-  tmp.group <-
-  results <- DEsingle(counts = object@LTMG@LTMG_discrete, group = tmp.group)
-
+  message("select condition to compare")
+  message(paste0(c(1:ncol(object@MetaInfo))," : ",c(colnames(object@MetaInfo)),"\n"))
+  ident.index <-  readline(prompt="select index of cell condition: ")
+  ident.index <- as.numeric(ident.index)
+  tmp.ident <- object@MetaInfo[,ident.index]
+  names(tmp.ident) <- rownames(object@MetaInfo)
+  # create index table
+  tmp.group.table <- data.frame(index = 1:unique(tmp.ident), condition = as.character(sort(unique(tmp.ident))),stringsAsFactors = F)
+  tmp.group.table <- rbind(tmp.group.table, c(nrow(tmp.group.table)+1,"rest of all"))
+  # select groups to compare
+  message("select index (left) of first group to compare : ")
+  message(paste0(tmp.group.table$index[1:nrow(tmp.group.table)-1], " : ", tmp.group.table$condition[1:nrow(tmp.group.table)-1],"\n"))
+  group.1.idx <- readline("input first group index : ")
+  message("select index (left) of second group to compare : ")
+  message(paste0(tmp.group.table$index[tmp.group.table$index != group.1.idx], " : ", tmp.group.table$condition[tmp.group.table$index != group.1.idx],"\n"))
+  group.2.idx <- readline(prompt="select index of group 2: ")
+  group.1 <- tmp.group.table[tmp.group.table$index == group.1.idx, 2]
+  group.2 <- tmp.group.table[tmp.group.table$index == group.2.idx, 2]
+  tmp.expression.table <- object@LTMG@LTMG_discrete
+  if(group.2 == "rest of all") {
+    new.condition <- as.character(tmp.ident)
+    # set group in new condition
+    new.condition[tmp.ident == group.1] <- group.1
+    new.condition[tmp.ident != group.1] <- "all"
+    results <- DEsingle(counts = tmp.expression.table, group = as.factor(new.condition))
+    results.classified <- DEtype(results = results, threshold = FDR)
+    object@LTMG@MarkerGene <- results.classified
+  } else {
+    new.condition <- vector(mode = "logical", length = length(tmp.ident))
+    new.condition[tmp.ident == group.1] <- "TRUE"
+    new.condition[tmp.ident == group.2] <- "TRUE"
+    tmp.new.condition <- as.factor(as.character(tmp.ident)[new.condition == "TRUE"])
+    tmp.expression.table <- tmp.expression.table[,new.condition == "TRUE"]
+    results <- DEsingle(counts = tmp.expression.table, group = as.factor(tmp.new.condition))
+    results.classified <- DEtype(results = results, threshold = FDR)
+    object@LTMG@MarkerGene <- results.classified
+  }
+  return(object)
 }
+
+#' @rdname FindMarkers
+#' @export
+setMethod("FindMarkers", "BRIC", .findMarkers)
+

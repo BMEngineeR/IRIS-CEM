@@ -4,7 +4,7 @@ NULL
 
 #' getblock function
 #'
-#' @param keyword
+#' @param keyword "Conds" for co-regulatory or "Genes" for co-expression gene
 #'
 .getBlock <-function( keyword = "Conds"){
   tmp.block <- readLines(paste0(getwd(),"/tmp_expression.txt.chars.blocks"))
@@ -71,12 +71,12 @@ setMethod("RunDiscretization", "BRIC", .runDiscretization)
   tmp.dir <- paste0(getwd(),"/tmp_expression.txt.chars")
   tmp.multi <- object@LTMG@LTMG_BinaryMultisignal
   tmp.multi <- cbind(ID = rownames(tmp.multi),tmp.multi)
-  write.table(object@LTMG@LTMG_BinaryMultisignal, file = tmp.dir, row.names = F, quote = F, sep = "\t")
+  write.table(tmp.multi, file = tmp.dir, row.names = F, quote = F, sep = "\t")
   print("finsished!")
   print("running Bicluster . . .")
   qubic(i= tmp.dir, d = TRUE, C = OpenDual, c = Extension, o = NumBlockOutput, f= BlockOverlap, k = BlockCellMin)
-  object<-.getBlock(keyword = "Conds")
-  object <-.getBlock(keyword = "Genes")
+  object <- .getBlock(keyword = "Conds")
+  object <- .getBlock(keyword = "Genes")
   return(object)
 }
 
@@ -96,8 +96,8 @@ setMethod("RunDiscretization", "BRIC", .runDiscretization)
     qubic(i= tmp.dir, d = TRUE, C = OpenDual, c = Extension, o = NumBlockOutput, f= BlockOverlap, k = BlockCellMin)
   } else{print("please use `RunDiscretization` first and then execute this command")}
 
-  object<-.getBlock(keyword = "Conds")
-  object <-.getBlock(keyword = "Genes")
+  object<- .getBlock(keyword = "Conds")
+  object <- .getBlock(keyword = "Genes")
   return(object)
 }
 
