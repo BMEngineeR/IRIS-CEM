@@ -85,4 +85,8 @@ setGeneric(name = "RunClassification",
 setGeneric(name = "FindMarkers",
            def =function(object, ...) standardGeneric("FindMarkers"))
 
+#' @export
+#' @rdname RunPathway
+setGeneric(name = "RunPathway",
+           def =function(object, ...) standardGeneric("RunPathway"))
 

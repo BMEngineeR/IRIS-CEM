@@ -14,14 +14,14 @@ NULL
   }
 
 
-  if(database = "KEGG"){
+  if(database == "KEGG"){
     markerko.vs.WT.KEGG<-enrichKEGG(gene=genes.use,
                                     organism = "mmu",
                                     keyType = "kegg",pAdjustMethod = "BH",
                                     pvalueCutoff  = 0.01,
                                     qvalueCutoff  = 0.05)
   }
-  if(database = "GO"){
+  if(database == "GO"){
     markerko.vs.WT.KEGG<-enrichGO(gene=genes.use,OrgDb = org.Mm.eg.db,
                                   ont="ALL",keyType = "SYMBOL",pAdjustMethod = "BH",
                                   pvalueCutoff  = 0.01,
