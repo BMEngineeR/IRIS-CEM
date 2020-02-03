@@ -16,15 +16,18 @@ NULL
   for (j in 1:length(tmp.cel.module)){
     BCcond <-unlist(strsplit(tmp.cel.module[j], split = " "))
     BCcond <-BCcond[BCcond!=""]  # exclude the blank string
-    CONDS <-c(BCcond,CONDS)
+    CONDS <-c(CONDS,BCcond)
     label_C <-c(label_C,rep(j,length(BCcond)))
   }
   df_C <-data.frame(cell_name=CONDS,Condition=label_C)
   if(keyword == "Conds"){
+    df_C$cell_name <-as.character(df_C$cell_name)
     object@BiCluster@CoCond_cell <- df_C
     return(object)
   } else if(keyword == "Genes"){
-    object@BiCluster@CoReg_gene <- df_C
+    tmp.df_C <- df_C
+    tmp.df_C$cell_name <-unlist(sapply(strsplit(as.character(tmp.df_C$cell_name),"_"),"[",1))
+    object@BiCluster@CoReg_gene <- tmp.df_C
     return(object)
   }
 
@@ -124,6 +127,7 @@ setMethod("RunDiscretization", "BRIC", .runDiscretization)
     .runBiclusterBaseOnDiscretization(object = object, OpenDual = OpenDual, Extension = Extension,
                                       NumBlockOutput = NumBlockOutput, BlockOverlap = BlockOverlap, BlockCellMin = BlockCellMin)
   }
+  return(object)
 
 }
 #' @export
