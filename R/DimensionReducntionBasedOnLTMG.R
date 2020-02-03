@@ -41,6 +41,7 @@ setMethod("RunDimensionReduction", "BRIC", .runDimensionReduction)
 #' @param dims
 #' @name RunClassification
 #' @importFrom Seurat FindNeighbors FindClusters
+#' @import ggplot2
 .runClassification <- function(object,dims = 1:15, k.param = 20, resolution = 0.6, algorithm = 1 ){
   if ( is.null(object@LTMG@tmp.seurat)) {stop("There is no temporary seurat obejct getting detected. \n Try to run RundimensionRuduction first.")}
   tmp.seurat <- object@LTMG@tmp.seurat
@@ -62,5 +63,43 @@ setMethod("RunDimensionReduction", "BRIC", .runDimensionReduction)
 setMethod("RunClassification", "BRIC", .runClassification)
 
 # .visualzeDim <- function(object, reduction = "tsne", )
+
+
+.plotDimension <- function(object, reduction = "tsne", pt_size = 0.5){
+
+  if(grepl("tsne", reduction, ignore.case = T) || grepl("umap", reduction, ignore.case = T)||grepl("pca", reduction, ignore.case = T)){
+
+    if(grepl("tsne", reduction, ignore.case = T)){
+      tmp.plot.table <- object@LTMG@DimReduce@TSNE[,c(1,2)]
+    }
+      else if(grepl("umap", reduction, ignore.case = T)){
+      tmp.plot.table <- object@LTMG@DimReduce@UMAP[,c(1,2)]
+     }
+      else if(grepl("tsne", reduction, ignore.case = T)){
+      tmp.plot.table <- object@LTMG@DimReduce@PCA[,c(1,2)]
+    }
+  } else {stop("choose a dimension reduction method from pca, umap, or tsne")}
+  message("select condition to present")
+  message(paste0(c(1:ncol(object@MetaInfo))," : ",c(colnames(object@MetaInfo)),"\n"))
+  ident.index <-  readline(prompt="select index of cell condition: ")
+  ident.index <- as.numeric(ident.index)
+  tmp.ident <- object@MetaInfo[,ident.index]
+  names(tmp.ident) <- rownames(object@MetaInfo)
+  # check name later add
+  tmp.plot.table <- cbind.data.frame(tmp.plot.table,Cell_type=as.character(tmp.ident))
+  p.cluster <- ggplot(tmp.plot.table, aes(x= tmp.plot.table[,1],y = tmp.plot.table[,2]))
+
+  p.cluster <- p.cluster+geom_point(stroke=pt_size,size=pt_size,aes(col=tmp.plot.table[,"Cell_type"]))
+
+  p.cluster <- p.cluster + guides(colour = guide_legend(override.aes = list(size=5))) + labs( color ="cell type")+ xlab("Dimension 1") + ylab("Dimentsion 2")
+  p.cluster
+}
+
+#' @rdname PlotDimension
+#' @export
+setMethod("PlotDimension", "BRIC", .plotDimension)
+
+
+
 
 

@@ -95,3 +95,9 @@ setGeneric(name = "RunPathway",
 setGeneric(name = "PlotHeatmap",
            def =function(object, ...) standardGeneric("PlotHeatmap"))
 
+#' @export
+#' @rdname PlotDimension
+setGeneric(name = "PlotDimension",
+           def =function(object, ...) standardGeneric("PlotDimension"))
+
+

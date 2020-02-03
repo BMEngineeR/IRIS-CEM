@@ -1,30 +1,32 @@
-# # # # # setwd("c:/analysis_work/BRIC/")
-# # # # # a<- read.csv("C:/Users/cha224/Documents/BRIC/inst/extdata/Pollen/Pollen_expression.csv",header = T,row.names = 1)
-# # # # # object<-CreateBRICObject(as.matrix(a))
-# # # # # object <- BRIC::NormalizeData(object)
-# # # object <- .addMeta(object)
-# # # # # object <- RunDiscretization(object)
-# # # # # # LTMG suite
-# # # # # object <- BRIC::RunLTMG(object,Gene_use = 2000)
-# # # # # # compare changlin ltmg and mine
-# # # # # #####################
-# # # # # ####################################
-# # # # #
-# # # # # object <- BRIC::CalBinaryMultiSignal(object)
-# # # # # object <- BRIC::CalBinarySingleSignal(object)
-# # # # # start.time <- Sys.time()
-# # # # # BRIC::RunBicluster(object = object,DiscretizationModel = "Quantile")
-# # # # # end.time <- Sys.time()
-# # # # # totAL <- start.time - end.time
-# # # # #
-# # # # # start.time <- Sys.time()
-# # # # # BRIC::RunBicluster(object = object,DiscretizationModel = "LTMG")
-# # # # # end.time <- Sys.time()
-# # # # # totAL <- start.time - end.time
-# # # # #
-# # # # # ######################
-# # # # # # example to kolo data
-# # # # # ####################
+# setwd("c:/analysis_work/BRIC/")
+# a<- read.csv("C:/Users/cha224/Documents/BRIC/inst/extdata/Pollen/Pollen_expression.csv",header = T,row.names = 1)
+# object <- CreateBRICObject(as.matrix(a))
+# object <- BRIC::NormalizeData(object)
+# object <- AddMeta(objectm, meta.info = NULL)
+# # LTMG suite
+# object <- BRIC::RunLTMG(object,Gene_use = 2000)
+# object <- BRIC::RunDimensionReduction(object,reduction = "umap")
+# object <- BRIC::RunClassification(object = object)
+# object <- BRIC::RunClassification(object = object,resolution = 0.2)
+# PlotDimension(object)
+# object <- BRIC::FindMarkers(object)
+# PlotDimension(object)
+# object <- RunPathway(object = object,customize.genelist = NULL, source = "Human", database = "GO", genes.source = "LTMG")
+# # bicluster
+# # # # # # #
+# a<- read.csv("C:/Users/cha224/Documents/BRIC/inst/extdata/Pollen/Pollen_expression.csv",header = T,row.names = 1)
+# object <- CreateBRICObject(as.matrix(a))
+# object <- BRIC::NormalizeData(object)
+# object <- AddMeta(object, meta.info = NULL)
+# # object <- RunDiscretization(object)
+# # LTMG suite
+# object <- BRIC::RunLTMG(object,Gene_use = 2000)
+# # DIscretizationModel = "LTMG" or "Bicluster"
+# object <- BRIC::RunDiscretization(object, DiscretizationModel = "LTMG",OpenDual = TRUE, Extension = 0.90,
+#                                   NumBlockOutput = 100, BlockOverlap = 0.7, BlockCellMin = 15)
+# # compare changlin ltmg and mine
+#####################
+####################################
 # # # # # library(BRIC)
 # # # # # setwd("/analysis_work/xudong/FInished_LTMG/LTMG/6.Kolodziejczyk")
 # # # # # a<- read.csv("genesymble_expression.csv",header =T,row.names = 1)
