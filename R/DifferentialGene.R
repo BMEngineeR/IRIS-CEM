@@ -2,7 +2,7 @@
 #' @include Classes.R
 NULL
 
-#' @importFrom DEsingle DEsingle
+#' @importFrom DEsingle DEsingle DEtype
 #'
 .findMarkers <- function(object, FDR = 0.05){
   # two group number as factor.

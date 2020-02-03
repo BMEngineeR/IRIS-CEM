@@ -17,7 +17,7 @@ GRAPH <-function(blocks){
   for (j in 1:length(BC)){
     BCcond <-unlist(strsplit(BC[j], split = " "))
     BCcond <-BCcond[BCcond!=""]  # exclude the blank string
-    CONDS <-c(BCcond,CONDS)
+    CONDS <-c(CONDS,BCcond)
     label_C <-c(label_C,rep(j,length(BCcond)))
   }
 

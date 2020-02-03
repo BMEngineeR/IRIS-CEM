@@ -1,8 +1,37 @@
 #' @include generics.R
 #' @include Classes.R
 NULL
-#' @importfrom gplots heatmap.2
+#' @importfrom pheatmap pheatmap
 
-.plotHeatMap <- function(object = object){
-  gene.name <- object@BiCluster@CoReg_gene
+.plotHeatmap <- function(object = object, N.block = 2){
+  condition.index <- 1:N.block
+  gene.sub <- c()
+  cell.sub <- c()
+  for (i in condition.index){
+    gene.sub <- rbind(gene.sub,object@BiCluster@CoReg_gene[object@BiCluster@CoReg_gene$Condition == i,])
+    cell.sub <- rbind(cell.sub, object@BiCluster@CoCond_cell[object@BiCluster@CoCond_cell$Condition==i,])
+  }
+  gene.sub.rmdup <- gene.sub[!duplicated(gene.sub$cell_name),]
+  cell.sub.rmdup <- cell.sub[!duplicated(cell.sub$cell_name),]
+  cell.duplicate.name <- cell.sub$cell_name[duplicated(cell.sub$cell_name)]
+  unique.gene.name <- gene.sub.rmdup$cell_name
+  unique.cell.name <- cell.sub.rmdup$cell_name
+  heatmap.matrix <- object@raw_count[unique.gene.name,unique.cell.name]
+  annotation <- data.frame(row.names = cell.sub.rmdup$cell_name, Condition = cell.sub.rmdup$Condition)
+  annotation[cell.duplicate.name,] <- "overlap"
+  pheatmap(heatmap.matrix,
+           color = colorRampPalette(c("blue","white","red"))(100),
+           scale = "row",
+           cluster_rows = F,
+           cluster_cols = F,
+           show_rownames = F,
+           show_colnames = F,
+           annotation = annotation
+           )
 }
+
+#' @export
+#' @rdname PlotHeatmap
+setMethod("PlotHeatmap", "BRIC", .plotHeatmap)
+
+
