@@ -90,3 +90,8 @@ setGeneric(name = "FindMarkers",
 setGeneric(name = "RunPathway",
            def =function(object, ...) standardGeneric("RunPathway"))
 
+#' @export
+#' @rdname PlotHeatmap
+setGeneric(name = "PlotHeatmap",
+           def =function(object, ...) standardGeneric("PlotHeatmap"))
+
