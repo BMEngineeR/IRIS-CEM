@@ -1,8 +1,11 @@
 #' @include generics.R
 #' @include Classes.R
 NULL
-#' @importfrom pheatmap pheatmap
-
+#' @param object
+#'
+#' @param N.block
+#'
+#' @import pheatmap
 .plotHeatmap <- function(object = object, N.block = 2){
   condition.index <- 1:N.block
   gene.sub <- c()

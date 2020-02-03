@@ -1,0 +1,57 @@
+---
+title: "BRIC_Tutorial"
+author: "Yuzhou Chang"
+date: "2/3/2020"
+output:
+  BiocStyle::html_document:
+    number_sections: no
+    toc: yes
+    highlight: pygments
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Introduction
+
+# Download
+`devtools::install_github("BMEngineeR/BRIC",force=T)`
+
+# Bicluster Track 
+This is the example input from normal expression matrix which means rows stand for gene and columns stand for cell.
+
+```{r, error=TRUE}
+library(BRIC)
+load("c:/analysis_work/BRIC/Bicluster_track/object_bicluster.RDS")
+# this is example of 
+# a<- read.csv("C:/Users/cha224/Documents/BRIC/inst/extdata/Pollen/Pollen_expression.csv",header = T,row.names = 1)
+# object <- CreateBRICObject(as.matrix(a))
+# object <- BRIC::NormalizeData(object)
+# object <- AddMeta(object, meta.info = NULL)
+```
+Runing LTMG may take a while
+```{r}
+# object <- RunDiscretization(object)
+### or
+# object <- BRIC::RunLTMG(object,Gene_use = 2000)
+```
+
+```{r}
+# object <- BRIC::CalBinaryMultiSignal(object)
+# # DIscretizationModel = "LTMG" or "Bicluster"
+# object <- BRIC::RunBicluster(object, DiscretizationModel = "LTMG",OpenDual = TRUE, Extension = 0.90,
+#                                   NumBlockOutput = 100, BlockOverlap = 0.7, BlockCellMin = 15)
+print(object@BiCluster@CoReg_gene[1:5,])
+print(object@BiCluster@CoCond_cell[1:5,])
+```
+
+```{r}
+# object <- BRIC::RunPathway(object = NULL,customize.genelist = NULL,
+#                            source = "Human", database = "GO", genes.source = "Bicluster")
+object@BiCluster@Pathway[1:5,]
+```
+
+```{r}
+PlotHeatmap(object)
+```
+

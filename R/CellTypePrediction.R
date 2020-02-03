@@ -141,7 +141,11 @@ CLUSTERING <- function(Raw,blocks,method='MCL',K=NULL){
   input <- paste0(getwd(),"/tmp_expression.txt.chars")
   tmp.label<-CLUSTERING(input, paste0(input,'.blocks'), method, K = K)    # not sure how to deal with that K
   object@MetaInfo <- cbind(object@MetaInfo, BRIC_Label = tmp.label)
+  return(object)
 }
+#' @rdname FindClassBasedOnMC
+#' @export
+setMethod("FindClassBasedOnMC","BRIC",.final)
 
 
 

@@ -1,11 +1,11 @@
-# setwd("c:/analysis_work/BRIC/")
+# # setwd("c:/analysis_work/BRIC/")
 # a<- read.csv("C:/Users/cha224/Documents/BRIC/inst/extdata/Pollen/Pollen_expression.csv",header = T,row.names = 1)
 # object <- CreateBRICObject(as.matrix(a))
 # object <- BRIC::NormalizeData(object)
-# object <- AddMeta(objectm, meta.info = NULL)
+# object <- AddMeta(object, meta.info = NULL)
 # # LTMG suite
 # object <- BRIC::RunLTMG(object,Gene_use = 2000)
-# object <- BRIC::RunDimensionReduction(object,reduction = "umap")
+# object <- BRIC::RunDimensionReduction(object,reduction = "tsne")
 # object <- BRIC::RunClassification(object = object)
 # object <- BRIC::RunClassification(object = object,resolution = 0.2)
 # PlotDimension(object)
@@ -14,6 +14,7 @@
 # object <- RunPathway(object = object,customize.genelist = NULL, source = "Human", database = "GO", genes.source = "LTMG")
 # # bicluster
 # # # # # # #
+# setwd("c:/analysis_work/BRIC/")
 # a<- read.csv("C:/Users/cha224/Documents/BRIC/inst/extdata/Pollen/Pollen_expression.csv",header = T,row.names = 1)
 # object <- CreateBRICObject(as.matrix(a))
 # object <- BRIC::NormalizeData(object)
@@ -21,11 +22,17 @@
 # # object <- RunDiscretization(object)
 # # LTMG suite
 # object <- BRIC::RunLTMG(object,Gene_use = 2000)
+# object <- BRIC::CalBinaryMultiSignal(object)
 # # DIscretizationModel = "LTMG" or "Bicluster"
-# object <- BRIC::RunDiscretization(object, DiscretizationModel = "LTMG",OpenDual = TRUE, Extension = 0.90,
+# object <- BRIC::RunBicluster(object, DiscretizationModel = "LTMG",OpenDual = TRUE, Extension = 0.90,
 #                                   NumBlockOutput = 100, BlockOverlap = 0.7, BlockCellMin = 15)
-# # compare changlin ltmg and mine
-#####################
+# object <- BRIC::RunPathway(object = NULL,customize.genelist = NULL,
+#                            source = "Human", database = "GO", genes.source = "Bicluster")
+# PlotHeatmap(object)
+
+
+# compare changlin ltmg and mine
+####################
 ####################################
 # # # # # library(BRIC)
 # # # # # setwd("/analysis_work/xudong/FInished_LTMG/LTMG/6.Kolodziejczyk")

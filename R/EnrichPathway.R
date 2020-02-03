@@ -6,12 +6,17 @@ NULL
 #' @importFrom clusterProfiler enrichKEGG enrichGO
 #' @import org.Mm.eg.db org.Hs.eg.db
 #' @importFrom AnnotationDbi select
-.runPathway <- function(object = NULL,customize.genelist = NULL, source = "Human", database = "GO", genes.source = "LTMG"){
+.runPathway <- function(object = NULL,customize.genelist = NULL,
+                        module.number = NULL,
+                        source = "Human", database = "GO", genes.source = "LTMG"){
   if (genes.source == "LTMG"){
     tmp.table<- object@LTMG@MarkerGene
     genes.use <- rownames(tmp.table)[tmp.table$pvalue.adj.FDR < 0.05]
   } else if (genes.source == "Bicluster" ){
-    genes.use <- object @BiCluster@CoReg_gene
+    message("there is total ",length(unique(object@BiCluster@CoReg_gene$Condition))," blocks detected, \n please choose number bellow: \n",
+            paste(unique(object@BiCluster@CoReg_gene$Condition)," "))
+    block.number <- readline("type the block numebr to enrich on Pathway : ")
+    genes.use <- object@BiCluster@CoReg_gene$cell_name[object@BiCluster@CoReg_gene$Condition == block.number]
   }
   if (is.null(customize.genelist)){
     genes.use <- genes.use
@@ -52,7 +57,7 @@ NULL
   if (genes.source == "Bicluster"){
     object@BiCluster@Pathway <- pathway@result
   }
-
+return(object)
 
 }
 

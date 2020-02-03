@@ -100,4 +100,10 @@ setGeneric(name = "PlotHeatmap",
 setGeneric(name = "PlotDimension",
            def =function(object, ...) standardGeneric("PlotDimension"))
 
+#' @export
+#' @rdname FindClassBasedOnMC
+setGeneric(name = "FindClassBasedOnMC",
+           def =function(object, ...) standardGeneric("FindClassBasedOnMC"))
+
+
 

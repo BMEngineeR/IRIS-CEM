@@ -78,9 +78,6 @@ setMethod("RunDiscretization", "BRIC", .runDiscretization)
   print("finsished!")
   print("running Bicluster . . .")
   qubic(i= tmp.dir, d = TRUE, C = OpenDual, c = Extension, o = NumBlockOutput, f= BlockOverlap, k = BlockCellMin)
-  object <- .getBlock(keyword = "Conds")
-  object <- .getBlock(keyword = "Genes")
-  return(object)
 }
 
 #' Title
@@ -99,9 +96,6 @@ setMethod("RunDiscretization", "BRIC", .runDiscretization)
     qubic(i= tmp.dir, d = TRUE, C = OpenDual, c = Extension, o = NumBlockOutput, f= BlockOverlap, k = BlockCellMin)
   } else{print("please use `RunDiscretization` first and then execute this command")}
 
-  object<- .getBlock(keyword = "Conds")
-  object <- .getBlock(keyword = "Genes")
-  return(object)
 }
 
 #' Run cluster
@@ -127,6 +121,8 @@ setMethod("RunDiscretization", "BRIC", .runDiscretization)
     .runBiclusterBaseOnDiscretization(object = object, OpenDual = OpenDual, Extension = Extension,
                                       NumBlockOutput = NumBlockOutput, BlockOverlap = BlockOverlap, BlockCellMin = BlockCellMin)
   }
+  object <- .getBlock(keyword = "Conds")
+  object <- .getBlock(keyword = "Genes")
   return(object)
 
 }
