@@ -244,13 +244,14 @@ LTMG<-function(VEC,Zcut_G,k=5){
 #' @importFrom mixtools normalmixEM
 #' @importFrom stats sd
 #' @examples
-.RunLTMG <- function(object,Gene_use = 2000, seed = 123, k = 5){
+.RunLTMG <- function(object,Gene_use = NULL, seed = 123, k = 5){
   MAT <- as.matrix(object@processed_count)
   set.seed(seed)
   Zcut_G <- log(Global_Zcut(MAT))
   LTMG_Res<-c()
   gene_name<-c()
-  MAT<-MAT[rowSums(MAT)>0,colSums(MAT)>0]
+  MAT <- ifelse(is.na(MAT),0,MAT)
+  MAT<- MAT[rowSums(MAT)>0,colSums(MAT)>0]
   if (is.null(Gene_use)|| grepl("all", Gene_use, ignore.case = T) ){
     Gene_use_name <- rownames(MAT)
   } else{
