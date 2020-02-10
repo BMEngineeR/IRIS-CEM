@@ -253,6 +253,8 @@ LTMG<-function(VEC,Zcut_G,k=5){
   MAT <- ifelse(is.na(MAT),0,MAT)
   MAT<- MAT[rowSums(MAT)>0,colSums(MAT)>0]
   if (is.null(Gene_use)|| grepl("all", Gene_use, ignore.case = T) ){
+
+    message("using all genes.")
     Gene_use_name <- rownames(MAT)
   } else{
     Gene_use_name <-rownames(MAT)[order(apply(MAT, 1, var),decreasing = T)[1:Gene_use]]

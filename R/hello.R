@@ -4,7 +4,7 @@
 # object <- BRIC::NormalizeData(object)
 # object <- AddMeta(object, meta.info = NULL)
 # # LTMG suite
-# object <- BRIC::RunLTMG(object,Gene_use = 2000)
+# object <- BRIC::RunLTMG(object,Gene_use = NULL)
 # object <- BRIC::RunDimensionReduction(object,reduction = "tsne")
 # object <- BRIC::RunClassification(object = object)
 # object <- BRIC::RunClassification(object = object,resolution = 0.2)
