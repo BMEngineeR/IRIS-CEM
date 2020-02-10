@@ -2,9 +2,8 @@
 #' @include Classes.R
 NULL
 
-
-#'
-#' @param object 
+#' @param object
+#' @importFrom qgraph qgraph
 .separateBic <- function(object = NULL){
   tmp.expression <- object@raw_count
   bic.number<-length(unique(object@BiCluster@CoCond_cell$Condition))
@@ -23,15 +22,15 @@ NULL
 
 #' plot network based on bicluster
 #'
-#' @param object 
-#' @param Bic.index 
-#' @param method 
+#' @param object
+#' @param Bic.index
+#' @param method
 #'
 #' @return
-#'
+#' @rdname PlotNetwork
 #' @examples
 .qunetwork <-  function(object = NULL, Bic.index = 1, method = c("pearson", "kendall", "spearman"), is.plot = TRUE) {
-  
+
   x <- object@raw_count
   number = 1: length(unique(object@BiCluster@CoCond_cell$Condition))
   groups = c(number[[Bic.index = Bic.index]])
@@ -39,20 +38,20 @@ NULL
     stop("at least 1 bicluster needed.")
   bics <- .separateBic(object = object)
   index <- which(number %in% groups)
-  
+
   rownamelist <- list()
   colnamelist <- list()
   for (i in 1:length(bics)) {
     rownamelist[[names(bics)[i]]] <- rownames(bics[[i]])
     colnamelist[[names(bics)[i]]] <- colnames(bics[[i]])
   }
-  
+
   allrownames <- Reduce(union, rownamelist)
   allcolnames <- Reduce(union, colnamelist)
-  
+
   un <- x[allrownames, allcolnames]
   rowidlist <- list()
-  
+
   if (length(groups) > 2)
     stop("length(group) > 2")
   if (length(groups) == 1) {
@@ -73,19 +72,19 @@ NULL
       match(setdiff(allrownames, union(rownamelist[[index[[1]]]],
                                        rownamelist[[index[[2]]]])), rownames(un))
   }
-  
+
   cort <- stats::cor(t(un), method = method)
-  
+
   if (is.plot == TRUE){
     plot.data <- list(cort, rowidlist)
     qgraph(plot.data[[1]], groups = plot.data[[2]], layout = "spring", minimum = 0.6, legend.cex = 0.5, color = c("red", "blue", "gold", "gray"), edge.label = FALSE)
   } else {
     return(list(cort, rowidlist))
   }
-  
+
 }
 #' @rdname PlotNetwork
 #' @export
-setMethod("PlotNetwork","BRIC",.qunetwork)
+setMethod("PlotNetwork","BRIC", .qunetwork)
 
 

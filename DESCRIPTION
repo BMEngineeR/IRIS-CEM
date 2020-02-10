@@ -23,6 +23,7 @@ Collate:
     'InputData.R'
     'LTMG.R'
     'NormalizeData.R'
+    'Network.R'
     'PlotHeatmap.R'
     'RcppExports.R'
     'hello.R'
