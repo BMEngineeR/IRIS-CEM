@@ -5,8 +5,7 @@ NULL
 #' getblock function
 #'
 #' @param keyword "Conds" for co-regulatory or "Genes" for co-expression gene
-#'
-.getBlock <-function( keyword = "Conds"){
+.getBlock <-function( object = NULL, keyword = "Conds"){
   tmp.block <- readLines(paste0(getwd(),"/tmp_expression.txt.chars.blocks"))
   tmp.bc <-grep(keyword, tmp.block, value = T)
   tmp.cel.module <- sapply(strsplit(tmp.bc,':',2),'[',2)
@@ -38,7 +37,7 @@ NULL
 #' @param object
 #' @param q
 #'
-#' @examples
+
 .runDiscretization <- function(object = NULL, q = 0.05, LogTransformation = FALSE){
   message("writing temporary expression file ...")
   tmp.dir <- paste0(getwd(),"/tmp_expression.txt")
@@ -121,8 +120,8 @@ setMethod("RunDiscretization", "BRIC", .runDiscretization)
     .runBiclusterBaseOnDiscretization(object = object, OpenDual = OpenDual, Extension = Extension,
                                       NumBlockOutput = NumBlockOutput, BlockOverlap = BlockOverlap, BlockCellMin = BlockCellMin)
   }
-  object <- .getBlock(keyword = "Conds")
-  object <- .getBlock(keyword = "Genes")
+  object <- .getBlock(object=object,keyword = "Conds")
+  object <- .getBlock(object = object, keyword = "Genes")
   return(object)
 
 }

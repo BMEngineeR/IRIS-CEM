@@ -22,6 +22,11 @@ NULL
   heatmap.matrix <- object@raw_count[unique.gene.name,unique.cell.name]
   annotation <- data.frame(row.names = cell.sub.rmdup$cell_name, Condition = cell.sub.rmdup$Condition)
   annotation[cell.duplicate.name,] <- "overlap"
+  annotation$temp <- rep(1,nrow(annotation))
+  order.index<-order(annotation$Condition)
+  annotation <- annotation[order.index,]
+  heatmap.matrix <- heatmap.matrix[,order.index]
+  annotation$temp <- NULL
   pheatmap(heatmap.matrix,
            color = colorRampPalette(c("blue","white","red"))(100),
            scale = "row",
