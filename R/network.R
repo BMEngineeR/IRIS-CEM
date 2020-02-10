@@ -76,7 +76,7 @@ NULL
   
   cort <- stats::cor(t(un), method = method)
   
-  if (is.plot = TRUE){
+  if (is.plot == TRUE){
     plot.data <- list(cort, rowidlist)
     qgraph(plot.data[[1]], groups = plot.data[[2]], layout = "spring", minimum = 0.6, legend.cex = 0.5, color = c("red", "blue", "gold", "gray"), edge.label = FALSE)
   } else {
