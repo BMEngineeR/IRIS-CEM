@@ -4,7 +4,7 @@
 # object <- BRIC::NormalizeData(object)
 # object <- AddMeta(object, meta.info = NULL)
 # # LTMG suite
-# object <- BRIC::RunLTMG(object,Gene_use = NULL)
+# object <- BRIC::RunLTMG(object,Gene_use = 4000)
 # object <- BRIC::RunDimensionReduction(object,reduction = "tsne")
 # object <- BRIC::RunClassification(object = object)
 # object <- BRIC::RunClassification(object = object,resolution = 0.2)
@@ -25,7 +25,7 @@
 # object <- BRIC::CalBinaryMultiSignal(object)
 # # DIscretizationModel = "LTMG" or "Bicluster"
 # object <- BRIC::RunBicluster(object, DiscretizationModel = "LTMG",OpenDual = TRUE, Extension = 0.90,
-#                                   NumBlockOutput = 100, BlockOverlap = 0.7, BlockCellMin = 15)
+#                                 NumBlockOutput = 100, BlockOverlap = 0.7, BlockCellMin = 15)
 # object <- BRIC::RunPathway(object = NULL,customize.genelist = NULL,
 #                            source = "Human", database = "GO", genes.source = "Bicluster")
 # PlotHeatmap(object)
