@@ -10,7 +10,7 @@ NULL
 #' @examples
 NULL
 
-#' @importFrom scater nromalize
+#' @importFrom scater normalize
 #' @importFrom SingleCellExperiment SingleCellExperiment
 #' @importFrom Seurat as.sparse
 #' @importFrom DrImpute DrImpute

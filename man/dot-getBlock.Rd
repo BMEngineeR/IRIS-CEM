@@ -4,7 +4,7 @@
 \alias{.getBlock}
 \title{getblock function}
 \usage{
-.getBlock(keyword = "Conds")
+.getBlock(object = NULL, keyword = "Conds")
 }
 \arguments{
 \item{keyword}{"Conds" for co-regulatory or "Genes" for co-expression gene}
