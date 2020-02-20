@@ -378,6 +378,7 @@ setMethod("GetBinarySingleSignal", "BRIC", .GetBinarySingleSignal)
 # calculate multisignal function and get function--------------------------
 .CalBinaryMultiSignal <- function(object = NULL){
   x <- object@LTMG@LTMG_discrete
+  x <- x[rowSums(x)>0,]
   MultiSig<-c()
   pb <- txtProgressBar(min = 0, max = nrow(x), style = 3)
   for (i in 1:nrow(x)){
@@ -389,6 +390,7 @@ setMethod("GetBinarySingleSignal", "BRIC", .GetBinarySingleSignal)
       for (j in 1:tmp.signal) {
         tmp.sub.ms<-ifelse(tmp.gene==j,1,0)
         sub.MultiSig<-rbind(sub.MultiSig,tmp.sub.ms)
+
       }
       rownames(sub.MultiSig)<-paste0(tmp.gene.name,"_",1:tmp.signal)
       MultiSig<-rbind(MultiSig,sub.MultiSig)
