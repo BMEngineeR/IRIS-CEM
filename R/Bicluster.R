@@ -25,7 +25,9 @@ NULL
     return(object)
   } else if(keyword == "Genes"){
     tmp.df_C <- df_C
-    tmp.df_C$cell_name <-unlist(sapply(strsplit(as.character(tmp.df_C$cell_name),"_"),"[",1))
+    tmp.gene.list <-as.character(tmp.df_C$cell_name)
+    tmp.gene.list <- gsub("_[0-9]$","",tmp.gene.list)
+    tmp.df_C$cell_name <-tmp.gene.list
     object@BiCluster@CoReg_gene <- tmp.df_C
     return(object)
   }
