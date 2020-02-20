@@ -69,8 +69,8 @@ setMethod("RunDiscretization", "BRIC", .runDiscretization)
 #' @param BlockCellMin
 #'
 #' @examples
-.runBiclusterBaseOnLTMG <- function(object = NULL, OpenDual = TRUE, Extension = 0.90,
-                                    NumBlockOutput = 100, BlockOverlap = 0.7, BlockCellMin = 15) {
+.runBiclusterBaseOnLTMG <- function(object = NULL, OpenDual = FALSE, Extension = 1,
+                                    NumBlockOutput = 100, BlockOverlap = 0.95, BlockCellMin = 15) {
   print("writing LTMG Discretization file ...")
   tmp.dir <- paste0(getwd(),"/tmp_expression.txt.chars")
   tmp.multi <- object@LTMG@LTMG_BinaryMultisignal
@@ -90,8 +90,8 @@ setMethod("RunDiscretization", "BRIC", .runDiscretization)
 #' @param BlockOverlap
 #' @param BlockCellMin
 #' @examples
-.runBiclusterBaseOnDiscretization <- function(object = NULL, OpenDual = TRUE, Extension = 0.90,
-                                    NumBlockOutput = 100, BlockOverlap = 0.7, BlockCellMin = 15) {
+.runBiclusterBaseOnDiscretization <- function(object = NULL, OpenDual = FASLE, Extension = 1,
+                                    NumBlockOutput = 100, BlockOverlap = 0.95, BlockCellMin = 15) {
   tmp.dir <- paste0(getwd(),"/tmp_expression.txt.chars")
   if(file.exists(tmp.dir)){
     qubic(i= tmp.dir, d = TRUE, C = OpenDual, c = Extension, o = NumBlockOutput, f= BlockOverlap, k = BlockCellMin)

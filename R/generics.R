@@ -108,5 +108,5 @@ setGeneric(name = "FindClassBasedOnMC",
 #' @export
 #' @rdname PlotNetwork
 setGeneric(name = "PlotNetwork",
-           def = function(object, ...) standardGeneric("PlotNetwork"))
+           def =function(object, ...) standardGeneric("PlotNetwork"))
 

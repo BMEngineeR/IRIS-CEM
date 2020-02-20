@@ -9,7 +9,9 @@ NULL
 #' @export
 #' @examples
 NULL
-#' @importFrom scater normalize
+
+#' @importFrom scater nromalize
+#' @importFrom SingleCellExperiment SingleCellExperiment
 #' @importFrom Seurat as.sparse
 #' @importFrom DrImpute DrImpute
 
@@ -20,8 +22,10 @@ NULL
     if (IsScaterNormal == FALSE) {
       my.normalized.data <- Input
     } else{
-      sce <- tryCatch(computeSumFactors(sce),error = function(e) normalizeSCE(sce))
-      sce <- scater::normalize(sce,return_log=F)
+      sce <- SingleCellExperiment(assays = list(counts = Input))
+      clusters <- quickCluster(sce)
+      sce <- computeSumFactors(sce, clusters = clusters)
+      sce <- scater::logNormCounts(sce,log = FALSE)
       my.normalized.data <- normcounts(sce)
     }
   } else {

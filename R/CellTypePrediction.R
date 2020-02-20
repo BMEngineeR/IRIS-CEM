@@ -132,8 +132,8 @@ CLUSTERING <- function(Raw,blocks,method='MCL',K=NULL){
   RST
 }
 
-#' @export
 #' @useDynLib BRIC
+#' @export
 ## final function
 ## i is the input, K is an optional parameter, used only when method=='SC'
 .final <- function(object = NULL, method = 'MCL', K = 5){

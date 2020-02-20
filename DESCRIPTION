@@ -1,6 +1,6 @@
 Package: BRIC
 Type: Package
-Title: What the Package Does in One 'Title Case' Line
+Title: BRIC for Comprehensive analysis based on single-cell RNA-Seq
 Version: 1.0
 Date: 2019-02-15
 Author: Yuzhou Chang
@@ -23,8 +23,9 @@ Collate:
     'InputData.R'
     'LTMG.R'
     'NormalizeData.R'
-    'Network.R'
+    'object.R'
     'PlotHeatmap.R'
+    'PlotNetwork.R'
     'RcppExports.R'
     'hello.R'
-    'object.R'
+ 
