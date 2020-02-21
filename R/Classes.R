@@ -1,45 +1,53 @@
-# create LTMG object
-#' Title
+#' Create DimReduce object
 #'
-#' @slot LTMG_discrete matrix.
-#' @slot LTMG_BinarySingleSignal matrix.
-#' @slot LTMG_BinaryMultisignal matrix.
-#' @slot  .
-#'
-#' @return
+#' @slot PCA ANY.
+#' @slot UMAP ANY.
+#' @slot TSNE ANY.
 #' @export
-#'
-#' @examples
-setClass("LTMGr", slots = c(
-  LTMG_discrete = "matrix",
-  LTMG_BinarySingleSignal = "matrix",
-  LTMG_BinaryMultisignal = "matrix"
+setClass("DimReduce",slots = c(
+  PCA = "ANY",
+  UMAP = "ANY",
+  TSNE = "ANY"
 )
 )
 # create Bicluster object
-#' Title
 #'
 #' @slot block ANY.
 #' @slot CoReg_gene ANY.
 #' @slot CoCond_cell ANY.
-#'
-#' @return
-#' @export
-#'
-#' @examples
 setClass("Bicluster", slots = c(
-  block = "ANY",
   CoReg_gene = "ANY",
-  CoCond_cell = "ANY"
+  CoCond_cell = "ANY",
+  Pathway = "ANY"
+)
+)
+# create LTMG object
+#'
+#' @slot LTMG_discrete matrix.
+#' @slot LTMG_BinarySingleSignal matrix.
+#' @slot DimReduce DimReduce
+#' @slot Cluster ANY
+#' @slot MarkerGene ANY
+#' @slot Pathway ANY
+#' @slot LTMG_BinaryMultisignal matrix.
+setClass("LTMGr", slots = c(
+  LTMG_discrete = "matrix",
+  LTMG_BinarySingleSignal = "matrix",
+  LTMG_BinaryMultisignal = "matrix",
+  DimReduce = "DimReduce",
+  MarkerGene = "ANY",
+  Pathway = "ANY",
+  tmp.seurat = "ANY"
 )
 )
 # set BRIC class
 #'
-#' @slot raw_count ANY.
-#' @slot LTMG_multisignal
-#' @slot LTMG_BiSingleSignal
-#' @slot LTMG_BiMultisignal
+#' @slot raw_count matrix.
+#' @slot MetaInfo ANY.
 #' @slot processed_count ANY.
+#' @slot Discretization matrix.
+#' @slot LTMG LTMGr.
+#' @slot Bicluster Bicluster.
 #'
 #' @return
 #' @export
@@ -49,6 +57,7 @@ setClass("Bicluster", slots = c(
 setClass("BRIC",
          slots=c(raw_count = "matrix",
                  processed_count = "ANY",
+                 MetaInfo = "ANY",
                  Discretization = "matrix",
                  LTMG = "LTMGr",
                  BiCluster = "Bicluster"

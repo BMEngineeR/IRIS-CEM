@@ -1,5 +1,4 @@
 #' @include generics.R
-#' @include object.R
 #' @include Classes.R
 NULL
 
@@ -247,26 +246,31 @@ LTMG<-function(VEC,Zcut_G,k=5){
 #' @examples
 .RunLTMG <- function(object,Gene_use = NULL, seed = 123, k = 5){
   MAT <- as.matrix(object@processed_count)
+  set.seed(seed)
+  MAT <- ifelse(is.na(MAT),0,MAT)
+  MAT<- MAT[rowSums(MAT)>0,colSums(MAT)>0]
   Zcut_G <- log(Global_Zcut(MAT))
-  LTMG_Res<-data.frame()
+  LTMG_Res<-c()
   gene_name<-c()
-  MAT<-MAT[rowSums(MAT)>0,colSums(MAT)>0]
-  if (is.null(Gene_use)){
+  if (is.null(Gene_use)|| grepl("all", Gene_use, ignore.case = T) ){
+
+    message("using all genes.")
     Gene_use_name <- rownames(MAT)
   } else{
     Gene_use_name <-rownames(MAT)[order(apply(MAT, 1, var),decreasing = T)[1:Gene_use]]
   }
 
+  LTMG_Res<-c()
   SEQ<-floor(seq(from = 1,to = length(Gene_use_name),length.out = 11))
 
+  set.seed(seed)
   for (i in 1:length(Gene_use_name)) {
-
-    if(i %in% SEQ){
+      if(i %in% SEQ){
       cat(paste0("Progress:",(grep("T",SEQ==i)-1)*10,"%\n" ))
     }
-    set.seed(seed)
+
     VEC<-MAT[Gene_use_name[i],]
-    cell.name <- colnames(MAT)
+    gene_name <- c(gene_name, Gene_use_name[i])
     y<-log(VEC)
     y<-y+rnorm(length(y),0,0.0001)
     Zcut<-min(log(VEC[VEC>0]))
@@ -306,26 +310,30 @@ LTMG<-function(VEC,Zcut_G,k=5){
         }, error=function(e){})
       }
     }
-    if(is.null(rrr_LTMG)){next()}
+    if(is.null(rrr_LTMG)){
+      y_state<-rep(0,length(y))
+    }else if(min(dim(rrr_LTMG))==1){
+      y_state<-rep(0,length(y))
+    }else{
+      rrr_LTMG<-rrr_LTMG[order(rrr_LTMG[,2]),]
+      rrr_use<-matrix(as.numeric(rrr_LTMG),ncol=3,byrow=F)
 
-    rrr_LTMG<-rrr_LTMG[order(rrr_LTMG[,2]),]
-    rrr_use<-matrix(as.numeric(rrr_LTMG),ncol=3,byrow=F)
-
-    y_use<-y[y>Zcut]
-    y_value<-NULL
-    for (k in 1:nrow(rrr_use)) {
-      TEMP<-dnorm(y_use,mean = rrr_use[k,2],sd = rrr_use[k,3])*rrr_use[k,1]
-      y_value<-rbind(y_value,TEMP)
+      y_use<-y[y>Zcut]
+      y_value<-NULL
+      for (k in 1:nrow(rrr_use)) {
+        TEMP<-dnorm(y_use,mean = rrr_use[k,2],sd = rrr_use[k,3])*rrr_use[k,1]
+        y_value<-rbind(y_value,TEMP)
+      }
+      y_state<-rep(0,length(y))
+      y_state[y>Zcut]<-apply(y_value,2,State_return)-1
     }
-    y_state<-rep(0,length(y))
-    y_state[y>Zcut]<-apply(y_value,2,State_return)-1
+
 
     LTMG_Res<-rbind(LTMG_Res,y_state)
-    gene_name<-c(gene_name,Gene_use_name[i])
 
   }
   rownames(LTMG_Res)<-gene_name
-  colnames(LTMG_Res) <- cell.name
+  colnames(LTMG_Res) <- colnames(MAT)
   LTMG_Res<-as.matrix(LTMG_Res)
   object@LTMG@LTMG_discrete <- LTMG_Res
   return(object)
@@ -370,16 +378,19 @@ setMethod("GetBinarySingleSignal", "BRIC", .GetBinarySingleSignal)
 # calculate multisignal function and get function--------------------------
 .CalBinaryMultiSignal <- function(object = NULL){
   x <- object@LTMG@LTMG_discrete
+  x <- x[rowSums(x)>0,]
   MultiSig<-c()
   pb <- txtProgressBar(min = 0, max = nrow(x), style = 3)
   for (i in 1:nrow(x)){
       tmp.gene<-x[i,]
       tmp.gene.name<-rownames(x)[i]
       tmp.signal<-max(tmp.gene)
+      tmp.signal.min <- min(tmp.gene)
       sub.MultiSig<-c()
       for (j in 1:tmp.signal) {
         tmp.sub.ms<-ifelse(tmp.gene==j,1,0)
         sub.MultiSig<-rbind(sub.MultiSig,tmp.sub.ms)
+
       }
       rownames(sub.MultiSig)<-paste0(tmp.gene.name,"_",1:tmp.signal)
       MultiSig<-rbind(MultiSig,sub.MultiSig)

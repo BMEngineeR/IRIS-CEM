@@ -1,6 +1,6 @@
 Package: BRIC
 Type: Package
-Title: What the Package Does in One 'Title Case' Line
+Title: BRIC for Comprehensive analysis based on single-cell RNA-Seq
 Version: 1.0
 Date: 2019-02-15
 Author: Yuzhou Chang
@@ -13,13 +13,18 @@ RoxygenNote: 7.0.2
 Collate: 
     'Classes.R'
     'generics.R'
+    'AddMeta.R'
     'Bicluster.R'
     'Bric.R'
     'CellTypePrediction.R'
+    'DifferentialGene.R'
+    'DimensionReducntionBasedOnLTMG.R'
+    'EnrichPathway.R'
     'InputData.R'
-    'object.R'
     'LTMG.R'
     'NormalizeData.R'
-    'PreprocessData.R'
+    'PlotHeatmap.R'
+    'PlotNetwork.R'
     'RcppExports.R'
     'hello.R'
+    'object.R'

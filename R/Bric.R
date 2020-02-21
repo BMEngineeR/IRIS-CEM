@@ -23,7 +23,7 @@ qubic <- function(i = NULL, N = FALSE, R = FALSE, Fa = FALSE, d = FALSE, D = FAL
   unloadNamespace("BRIC")
   ret <- .main(vec)
   if(ret == 42) return(BRIC::qubic(paste0(i, ".chars"), d = TRUE))
-  return (ret)
+  # return (ret)
 }
 
 

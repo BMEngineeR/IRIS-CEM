@@ -6,10 +6,10 @@
 \usage{
 .runBiclusterBaseOnDiscretization(
   object = NULL,
-  OpenDual = TRUE,
-  Extension = 0.9,
+  OpenDual = FASLE,
+  Extension = 1,
   NumBlockOutput = 100,
-  BlockOverlap = 0.7,
+  BlockOverlap = 0.95,
   BlockCellMin = 15
 )
 }

@@ -5,6 +5,11 @@ setGeneric(name="NormalizeData",
 )
 
 
+#' @export
+#' @rdname AddMeta
+setGeneric(name = "AddMeta",
+           def =function(object, ...) standardGeneric("AddMeta"))
+
 #' @rdname RunLTMG
 #' @export
 setGeneric(name="RunLTMG",
@@ -61,7 +66,47 @@ setGeneric(name = "RunDiscretization",
 setGeneric(name = "RunBicluster",
            def = function(object, ...) standardGeneric("RunBicluster"))
 
+# LTMG series
+
+#' @export
+#' @rdname RunDimensionReduction
+setGeneric(name = "RunDimensionReduction",
+           def =function(object, ...) standardGeneric("RunDimensionReduction"))
 
 
+#' @export
+#' @rdname RunClassification
+setGeneric(name = "RunClassification",
+           def =function(object, ...) standardGeneric("RunClassification"))
 
+
+#' @export
+#' @rdname FindMarkers
+setGeneric(name = "FindMarkers",
+           def =function(object, ...) standardGeneric("FindMarkers"))
+
+#' @export
+#' @rdname RunPathway
+setGeneric(name = "RunPathway",
+           def =function(object, ...) standardGeneric("RunPathway"))
+
+#' @export
+#' @rdname PlotHeatmap
+setGeneric(name = "PlotHeatmap",
+           def =function(object, ...) standardGeneric("PlotHeatmap"))
+
+#' @export
+#' @rdname PlotDimension
+setGeneric(name = "PlotDimension",
+           def =function(object, ...) standardGeneric("PlotDimension"))
+
+#' @export
+#' @rdname FindClassBasedOnMC
+setGeneric(name = "FindClassBasedOnMC",
+           def =function(object, ...) standardGeneric("FindClassBasedOnMC"))
+
+#' @export
+#' @rdname PlotNetwork
+setGeneric(name = "PlotNetwork",
+           def =function(object, ...) standardGeneric("PlotNetwork"))
 

@@ -1,10 +1,11 @@
-### cell type classification
+#' @include generics.R
+#' @include Classes.R
+NULL
 
-####### 1.construct weighted graph #########
-## function to construct weighted graph based on blocks file from biclustering.
-## Input is .blocks file, output is three-column weighted graph, with nodes being cells and edge being weight
-## this is an intermediate function, the only purpose is prepare weighted graph for following clustering
-
+#' @param blocks
+#'
+#'
+#' @examples
 GRAPH <-function(blocks){
   A <- readLines(blocks)
   TEMP <- grep('Conds', A, value = TRUE) ## extract condition lines in each BC
@@ -16,7 +17,7 @@ GRAPH <-function(blocks){
   for (j in 1:length(BC)){
     BCcond <-unlist(strsplit(BC[j], split = " "))
     BCcond <-BCcond[BCcond!=""]  # exclude the blank string
-    CONDS <-c(BCcond,CONDS)
+    CONDS <-c(CONDS,BCcond)
     label_C <-c(label_C,rep(j,length(BCcond)))
   }
 
@@ -131,10 +132,27 @@ CLUSTERING <- function(Raw,blocks,method='MCL',K=NULL){
   RST
 }
 
-#' @export
 #' @useDynLib BRIC
+#' @export
 ## final function
 ## i is the input, K is an optional parameter, used only when method=='SC'
-final <- function(i, method = 'MCL', K){
-  CLUSTERING(i, paste0(i,'.blocks'), method, K = K)    # not sure how to deal with that K
+.final <- function(object = NULL, method = 'MCL', K = 5){
+  # chars file
+  input <- paste0(getwd(),"/tmp_expression.txt.chars")
+  tmp.label<-CLUSTERING(input, paste0(input,'.blocks'), method, K = K)    # not sure how to deal with that K
+  object@MetaInfo <- cbind(object@MetaInfo, BRIC_Label = tmp.label)
+  return(object)
 }
+#' @rdname FindClassBasedOnMC
+#' @export
+setMethod("FindClassBasedOnMC","BRIC",.final)
+
+
+
+
+
+
+
+
+
+
