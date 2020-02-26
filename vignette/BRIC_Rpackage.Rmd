@@ -1,7 +1,7 @@
 ---
 title: "BRIC vignette"
-subtitle: BRIC (Biclustering-based gene Regulation Inference and Cell-type prediction)
-abstract: BRIC is a novel biclustering method for the detection of the       repertoire of active GRS within each single cell. This introductory vignette provides an overview of the steps of the workflow, installation, and source of the dataset used as example.
+subtitle: BRIC 
+abstract: BRIC integrates in-house and state-of-the-art computational tools and provides two analysis strategies, including LTMG (left-truncated mixture Gaussian model)-embedded scRNA-Seq analy-sis and co-expression gene analysis.
 date: "March 18, 2019"
 output:
   BiocStyle::html_document:
@@ -17,9 +17,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Intorduction to BRIC
 
-BRIC (Biclustering-based gene Regulation Inference and Cell-type prediction) is a novel biclustering method for the detection of the repertoire of active GRS within each single cell, based on which we annotate the type and/or physiological state of each cell.
+BRIC integrates in-house and state-of-the-art computational tools and provides two analysis strategies, including LTMG (left-truncated mixture Gaussian model)-embedded scRNA-Seq analysis and co-expression gene analysis.
 
-The main idea of BRIC consists of two major steps: (i) detecting all gene co-regulation modules (GCM) each corresponding to a GRS, and (ii) inferring the active GRS of each cell, and further its cell type or physiological state. Step (i) first utilized our in-house left truncated mixture Gaussian (LTMG) model for an accurate quantification of the sample specific GRS for each individual gene. Step (ii) utilized the set of active states of GRS within a cell for its cell type prediction. 
+The main idea of BRIC consists of two major steps: (i) LTMG-based scRNA-seq analysis, and (ii) inferring the active GRS of each cell, and further its cell type or physiological state. Step (i) first utilized our in-house left truncated mixture Gaussian (LTMG) model for an accurate quantification of the sample specific GRS for each individual gene. Step (ii) utilized the set of active states of GRS within a cell for its cell type prediction. 
 
 
 
