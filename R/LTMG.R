@@ -8,11 +8,13 @@ MIN_return<-function(x){
 }
 
 #' @rdname Global_Zcut
-Global_Zcut<-function(MAT) {
+Global_Zcut<-function(MAT,seed = NULL) {
   VEC<-apply(MAT, 1, MIN_return)
+  set.seed(seed)
   VEC<-VEC+rnorm(length(VEC),0,0.0001)
   Zcut_univ<-0
   tryCatch({
+    set.seed(seed)
     MIN_fit = normalmixEM(log(VEC),k = 2)
     INTER<-Intersect2Mixtures(Mean1 = MIN_fit$mu[1],SD1 = MIN_fit$sigma[1],Weight1 = MIN_fit$lambda[1],
                               Mean2 = MIN_fit$mu[2],SD2 = MIN_fit$sigma[2],Weight2 = MIN_fit$lambda[2])
@@ -249,7 +251,7 @@ LTMG<-function(VEC,Zcut_G,k=5){
   set.seed(seed)
   MAT <- ifelse(is.na(MAT),0,MAT)
   MAT<- MAT[rowSums(MAT)>0,colSums(MAT)>0]
-  Zcut_G <- log(Global_Zcut(MAT))
+  Zcut_G <- log(Global_Zcut(MAT,seed = seed))
   LTMG_Res<-c()
   gene_name<-c()
   if (is.null(Gene_use)|| grepl("all", Gene_use, ignore.case = T) ){
