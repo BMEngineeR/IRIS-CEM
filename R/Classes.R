@@ -3,7 +3,6 @@
 #' @slot PCA ANY.
 #' @slot UMAP ANY.
 #' @slot TSNE ANY.
-#' @export
 setClass("DimReduce",slots = c(
   PCA = "ANY",
   UMAP = "ANY",

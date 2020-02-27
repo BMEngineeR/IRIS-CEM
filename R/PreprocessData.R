@@ -1,22 +1,18 @@
 #' @include generics.R
 NULL
-#' Normarlize data
+
+#' @param object
 #'
-#' @param Input
+#' @param IsScaterNormal whether open normalization
 #' @param IsImputation
 #'
-#' @return
-#' @export
-#' @examples
-NULL
-
 #' @importFrom scater normalize logNormCounts
 #' @importFrom SingleCellExperiment SingleCellExperiment normcounts
 #' @importFrom scran quickCluster computeSumFactors
 #' @importFrom Seurat as.sparse
 #' @importFrom DrImpute DrImpute
 
-.NormalizeData <- function(object = NULL, IsScaterNormal=FALSE, IsImputation = FALSE){
+.processData <- function(object = NULL, IsScaterNormal=FALSE, IsImputation = FALSE){
   Input <- object@Raw_count
   if(all(as.numeric(unlist(Input[nrow(Input),]))%%1==0)){
     ## normalization##############################
@@ -50,7 +46,7 @@ NULL
 
 #' @export
 #' @rdname NormalizeData
-setMethod("NormalizeData", "BRIC", .NormalizeData)
+setMethod("ProcessData", "BRIC", .processData)
 
 
 

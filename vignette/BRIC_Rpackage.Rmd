@@ -100,7 +100,45 @@ As example, we will use Yan's data, a dataset containing 90 cells and 20,214 gen
 The original expression matrix was downloaded from <https://s3.amazonaws.com/scrnaseq-public-datasets/manual-data/yan/nsmb.2660-S2.csv>. The expression is provided as RPKM value. For convenience, we removed the space in the column names and deleted the second column(Transcript_ID). The processed data is available at <https://github.com/zy26/BRICdata/blob/master/Example%20data/Yan_RPKM>.
 
 
-# Load data and create BRIC object. 
+# Input data, create BRIC object, add meta information, and preprocessing. 
+
+BRIC can accepted 10X chromium input files, including a folder (contain gene name, cell name, and sparse matrix) and .h5 file.
+
+## Input data
+
+1. Read from 10X folder.
+
+```{r folder, eval= FALSE, echo=TRUE}
+InputMatrix <- BRIC::ReadFrom10X_folder(system.file("inst/extdata/10X_3K/folder_10X/"))
+```
+
+2. Read from .h5 file.
+
+```{r h5_files, eval= FALSE, echo=TRUE}
+InputMatrix <- BRIC::ReadFrom10X_h5(system.file("extdata","5k_pbmc_protein_v3_filtered_feature_bc_matrix.h5", package = "BRIC"))
+```
+
+## Add meta information
+
+1. Create BRIC object.
+
+```{r create_object, eval= FALSE, echo=TRUE}
+object <- CreateBRICObject(InputMatrix)
+```
+
+2. Addmeta: this step can add customized cell label by user, the format of file passing to `meta.info` is data frame of which row name should be cell ID, and column name should be cell type.    
+```{r add_metadata, eval= FALSE, echo=TRUE}
+object <- AddMeta(object, meta.info = NULL)
+```
+
+## Preprocesing 
+
+This step is optional. User can choose perform normalization or imputation based on their need (default is closed both two methods). The normalization method is from package scran and can be opened by using parameter `IsScaterNormal = TRUE`. The imputation method is from package DrImpute and can be opened by using parameter `IsImputation = TRUE`.
+```{r add_metadata, eval= FALSE, echo=TRUE}
+object <- ProceeData(object,IsScaterNormal=FALSE, IsImputation = FALSE)
+```
+
+# LTMG mod
 # Biclustering
 
 BRCI can provide biclustering function, which is based on our in-house novel algorithm, QUBIC2 (<https://github.com/maqin2001/qubic2>). Here we will show the basic biclustering usage of BRIC using a $100 \times 90$ expression matrix extracted from Yan's data(available at <https://github.com/zy26/BRICdata/blob/master/Example%20data/Yan_sub.txt>). 

@@ -41,13 +41,13 @@ setMethod("RunDimensionReduction", "BRIC", .runDimensionReduction)
 #' @param algorithm
 #' @param dims
 #' @name RunClassification
-#' @importFrom Seurat FindNeighbors FindClusters ElbowPlot
+#' @importFrom Seurat FindNeighbors FindClusters
 #' @import ggplot2
 .runClassification <- function(object,dims = 1:15, k.param = 20, resolution = 0.6, algorithm = 1 ){
   if ( is.null(object@LTMG@Tmp.seurat)) {stop("There is no temporary seurat obejct getting detected. \n Try to run RundimensionRuduction first.")}
   Tmp.seurat <- object@LTMG@Tmp.seurat
   Tmp.seurat <- FindNeighbors(Tmp.seurat,dims=dims, k.param = k.param)
-  ElbowPlot(Tmp.seurat, ndims = length(dims)+5)
+  # Seurat::ElbowPlot(Tmp.seurat, ndims = length(dims)+5)
   Tmp.seurat <- FindClusters(Tmp.seurat, resolution = resolution, algorithm = algorithm)
   tmp.meta <- object@MetaInfo
   tmp.colname <- colnames(tmp.meta)

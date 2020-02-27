@@ -1,7 +1,7 @@
-#' @rdname NormalizeData
+#' @rdname ProcessData
 #' @export
-setGeneric(name="NormalizeData",
-           def=function(object, ...) standardGeneric("NormalizeData")
+setGeneric(name="ProcessData",
+           def=function(object, ...) standardGeneric("ProcessData")
 )
 
 

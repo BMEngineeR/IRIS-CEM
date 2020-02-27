@@ -718,7 +718,10 @@ BRIC integrates in-house and state-of-the-art computational tools and provides t
 </ul></li>
 <li><a href="#installation">Installation</a></li>
 <li><a href="#example-dataset">Example dataset</a></li>
-<li><a href="#load-data-and-create-bric-object.">Load data and create BRIC object.</a></li>
+<li><a href="#input-data-preprocessing-and-create-bric-object.">Input data, preprocessing, and create BRIC object.</a><ul>
+<li><a href="#input-data">Input data</a></li>
+<li><a href="#preprocessing-data">Preprocessing data</a></li>
+</ul></li>
 <li><a href="#biclustering">Biclustering</a></li>
 <li><a href="#cell-type-prediction">Cell type prediction</a></li>
 </ul>
@@ -779,7 +782,7 @@ BRIC integrates in-house and state-of-the-art computational tools and provides t
 <h2>Environment</h2>
 <p>We will assum you have the following installed:</p>
 <ul>
-<li>R (greater than 3.5)</li>
+<li>R (equal or greater than 3.5)</li>
 </ul>
 <p>Pre-install packge</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">install.packages</span>(<span class="kw">c</span>(<span class="st">&#39;devtools&#39;</span>, <span class="st">&#39;AdaptGauss&#39;</span>, <span class="st">&quot;pheatmap&quot;</span>, <span class="st">&#39;mixtools&#39;</span>, </a>
@@ -821,21 +824,45 @@ BRIC integrates in-house and state-of-the-art computational tools and provides t
 </blockquote>
 <p>The original expression matrix was downloaded from <a href="https://s3.amazonaws.com/scrnaseq-public-datasets/manual-data/yan/nsmb.2660-S2.csv" class="uri">https://s3.amazonaws.com/scrnaseq-public-datasets/manual-data/yan/nsmb.2660-S2.csv</a>. The expression is provided as RPKM value. For convenience, we removed the space in the column names and deleted the second column(Transcript_ID). The processed data is available at <a href="https://github.com/zy26/BRICdata/blob/master/Example%20data/Yan_RPKM" class="uri">https://github.com/zy26/BRICdata/blob/master/Example%20data/Yan_RPKM</a>.</p>
 </div>
-<div id="load-data-and-create-bric-object." class="section level1">
-<h1>Load data and create BRIC object.</h1>
+<div id="input-data-preprocessing-and-create-bric-object." class="section level1">
+<h1>Input data, preprocessing, and create BRIC object.</h1>
+<p>BRIC can accepted 10X chromium input files, including a folder (contain gene name, cell name, and sparse matrix) and .h5 file.</p>
+<div id="input-data" class="section level2">
+<h2>Input data</h2>
+<ol style="list-style-type: decimal">
+<li>Read from 10X folder.</li>
+</ol>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1">InputMatrix &lt;-<span class="st"> </span>BRIC<span class="op">::</span><span class="kw">ReadFrom10X_folder</span>(<span class="kw">system.file</span>(<span class="st">&quot;inst/extdata/10X_3K/folder_10X/&quot;</span>))</a></code></pre></div>
+<ol start="2" style="list-style-type: decimal">
+<li>Read from .h5 file.</li>
+</ol>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">InputMatrix &lt;-<span class="st"> </span>BRIC<span class="op">::</span><span class="kw">ReadFrom10X_h5</span>(<span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>,<span class="st">&quot;5k_pbmc_protein_v3_filtered_feature_bc_matrix.h5&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;BRIC&quot;</span>))</a></code></pre></div>
+</div>
+<div id="preprocessing-data" class="section level2">
+<h2>Preprocessing data</h2>
+<ol style="list-style-type: decimal">
+<li>Create BRIC object.</li>
+</ol>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1">object &lt;-<span class="st"> </span><span class="kw">CreateBRICObject</span>(InputMatrix)</a></code></pre></div>
+<ol start="2" style="list-style-type: decimal">
+<li>Addmeta: this step can add customized cell label by user, the format of file passing to <code>meta.info</code> is data frame of which row name should be cell ID, and column name should be cell type.</li>
+</ol>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">object &lt;-<span class="st"> </span><span class="kw">AddMeta</span>(object, <span class="dt">meta.info =</span> <span class="ot">NULL</span>)</a></code></pre></div>
+<p>This step is optional. User can choose perform normalization or imputation based on their need. The normalization method is from scran and can be opened by using parameter <code>Is</code></p>
+</div>
 </div>
 <div id="biclustering" class="section level1">
 <h1>Biclustering</h1>
 <p>BRCI can provide biclustering function, which is based on our in-house novel algorithm, QUBIC2 (<a href="https://github.com/maqin2001/qubic2" class="uri">https://github.com/maqin2001/qubic2</a>). Here we will show the basic biclustering usage of BRIC using a <span class="math inline">\(100 \times 90\)</span> expression matrix extracted from Yan’s data(available at <a href="https://github.com/zy26/BRICdata/blob/master/Example%20data/Yan_sub.txt" class="uri">https://github.com/zy26/BRICdata/blob/master/Example%20data/Yan_sub.txt</a>).</p>
 <p>You can type the following command to run discretization + biclustering directly:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">setwd</span>(<span class="st">&#39;/path/to/your/data&#39;</span>)</a>
-<a class="sourceLine" id="cb3-2" title="2"><span class="kw">library</span>(BRIC)</a>
-<a class="sourceLine" id="cb3-3" title="3"><span class="co"># BRIC::qubic(&#39;Yan_sub.txt&#39;,R=TRUE)</span></a></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1"><span class="kw">setwd</span>(<span class="st">&#39;/path/to/your/data&#39;</span>)</a>
+<a class="sourceLine" id="cb7-2" title="2"><span class="kw">library</span>(BRIC)</a>
+<a class="sourceLine" id="cb7-3" title="3"><span class="co"># BRIC::qubic(&#39;Yan_sub.txt&#39;,R=TRUE)</span></a></code></pre></div>
 <p>This will output several files, and among them you will find one named <code>Yan_sub.txt.chars.blocks</code>,which contains the predicted biclusters.</p>
 <p>Or, you may first type the following command to discretized the data:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">BRIC<span class="op">::</span><span class="kw">qubic</span>(<span class="st">&#39;Yan_sub.txt&#39;</span>,<span class="dt">R=</span><span class="ot">TRUE</span>,<span class="dt">F=</span><span class="ot">TRUE</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">BRIC<span class="op">::</span><span class="kw">qubic</span>(<span class="st">&#39;Yan_sub.txt&#39;</span>,<span class="dt">R=</span><span class="ot">TRUE</span>,<span class="dt">F=</span><span class="ot">TRUE</span>)</a></code></pre></div>
 <p>When this step is done(you will find some files, including <code>Yan_sub.txt.chars</code>), type the following command to run biclustering:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1">BRIC<span class="op">::</span><span class="kw">qubic</span>(<span class="st">&#39;Yan_sub.txt.chars&#39;</span>,<span class="dt">d=</span><span class="ot">TRUE</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1">BRIC<span class="op">::</span><span class="kw">qubic</span>(<span class="st">&#39;Yan_sub.txt.chars&#39;</span>,<span class="dt">d=</span><span class="ot">TRUE</span>)</a></code></pre></div>
 <p>Which will also output a file named <code>Yan_sub.txt.chars.blocks</code>.</p>
 <p>Note that the second way run discretization and biclustering seperately. Since discretization ususally take a long time, we recommend to use the second way. In this case, you can try biclustering parameters as needed based on the discretized data, avoiding wasting time on discretization.</p>
 <p>(The default parameters in BRIC are k=13, f=0.85, c=0.90,o=5000, you may use other parameters as you like, just specify them in the argument, e.g., BRIC::qubic(‘Yan_sub.txt’,R=TRUE,k=8,f=0.90,c=0.95,o=1000))</p>
@@ -844,35 +871,35 @@ BRIC integrates in-house and state-of-the-art computational tools and provides t
 <h1>Cell type prediction</h1>
 <p>The cell type prediction of BRIC is based on the biclustering results. In short, it will construct a weighted graph based on the biclusters and then do clustering on the weighted graph. Currently, we provide two commonly used clustering methods: MCL and spectral clustering.</p>
 <p>To do cell type prediction, you can call the <code>final()</code>function, using expression matrix as input:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">RST &lt;-BRIC<span class="op">::</span><span class="kw">final</span>(<span class="st">&#39;Yan_RPKM&#39;</span>,<span class="dt">R=</span><span class="ot">TRUE</span>,<span class="dt">method=</span><span class="st">&#39;MCL&#39;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">RST &lt;-BRIC<span class="op">::</span><span class="kw">final</span>(<span class="st">&#39;Yan_RPKM&#39;</span>,<span class="dt">R=</span><span class="ot">TRUE</span>,<span class="dt">method=</span><span class="st">&#39;MCL&#39;</span>)</a></code></pre></div>
 <p>Which will automatically conduct <code>biclustering</code>and <code>cell type prediction</code>. Note that it may take quite a long time to finish, as the discretization step of the biclustering is time-consuming.</p>
 <p>Or, you may first conduct <code>biclustering</code> and then provide the output <em>.chars</em> file to the<code>final()</code>function:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1"><span class="co"># BRIC::qubic(&#39;Yan_RPKM&#39;,R=TRUE)</span></a></code></pre></div>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1"><span class="co">#RST &lt;-BRIC::final(&#39;Yan_RPKM.chars&#39;,d=TRUE,method=&#39;MCL&#39;) # Note that must add d=TRUE if use .chars as input</span></a>
-<a class="sourceLine" id="cb8-2" title="2"><span class="co"># head(RST)</span></a></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1"><span class="co"># BRIC::qubic(&#39;Yan_RPKM&#39;,R=TRUE)</span></a></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1"><span class="co">#RST &lt;-BRIC::final(&#39;Yan_RPKM.chars&#39;,d=TRUE,method=&#39;MCL&#39;) # Note that must add d=TRUE if use .chars as input</span></a>
+<a class="sourceLine" id="cb12-2" title="2"><span class="co"># head(RST)</span></a></code></pre></div>
 <p>Both ways will give you a list of predicted cell labels</p>
 <p>Note:</p>
 <ul>
 <li>By default, BRIC use <em>MCL</em> clustering. You may choose spectral clustering, and if so,you also need to specify the number of cell types(e.g., 6). In that case, you need to to call the function in this way: <code>BRIC::final(&#39;Yan_RPKM.chars,d=TRUE,method=&#39;SC&#39;,K=6)</code></li>
 </ul>
 <p>If you have reference label at hand, you can calculate some external criteria to evaluate the agreement between predicted cell labels and reference labels:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1"><span class="co"># library(mclust)</span></a>
-<a class="sourceLine" id="cb9-2" title="2"><span class="co"># library(clues)</span></a>
-<a class="sourceLine" id="cb9-3" title="3"><span class="co"># target &lt;-read.table(&#39;Yan_cell_label.csv&#39;,header=T,sep=&#39;,&#39;)  # read reference label</span></a>
-<a class="sourceLine" id="cb9-4" title="4"><span class="co"># head(target)</span></a>
-<a class="sourceLine" id="cb9-5" title="5"><span class="co"># # judge if the cell names are consistent</span></a>
-<a class="sourceLine" id="cb9-6" title="6"><span class="co"># aa &lt;-names(RST)</span></a>
-<a class="sourceLine" id="cb9-7" title="7"><span class="co"># bb &lt;-target$Cell_type</span></a>
-<a class="sourceLine" id="cb9-8" title="8"><span class="co"># # if consistent, continue to calculate ARI ect</span></a>
-<a class="sourceLine" id="cb9-9" title="9"><span class="co"># if (identical(sort(aa),sort(as.character(bb)))==&#39;TRUE&#39;){</span></a>
-<a class="sourceLine" id="cb9-10" title="10"><span class="co">#   sorted &lt;-RST[match(target$Cell_type,names(RST))] # sort the predicted label</span></a>
-<a class="sourceLine" id="cb9-11" title="11"><span class="co">#   ARI &lt;-adjustedRandIndex(sorted,target$Cluster)  </span></a>
-<a class="sourceLine" id="cb9-12" title="12"><span class="co">#   RI &lt;-adjustedRand(sorted,target$Cluster,randMethod=&#39;Rand&#39;)</span></a>
-<a class="sourceLine" id="cb9-13" title="13"><span class="co">#   FM &lt;-adjustedRand(sorted,target$Cluster,randMethod=&#39;FM&#39;)</span></a>
-<a class="sourceLine" id="cb9-14" title="14"><span class="co">#   JI &lt;-adjustedRand(sorted,target$Cluster,randMethod=&#39;Jaccard&#39;)</span></a>
-<a class="sourceLine" id="cb9-15" title="15"><span class="co">#   df &lt;-data.frame(ARI=ARI, RandIndex=RI,FolkesMallow=FM, Jaccard=JI)</span></a>
-<a class="sourceLine" id="cb9-16" title="16"><span class="co">#   df</span></a>
-<a class="sourceLine" id="cb9-17" title="17"><span class="co"># }</span></a></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1"><span class="co"># library(mclust)</span></a>
+<a class="sourceLine" id="cb13-2" title="2"><span class="co"># library(clues)</span></a>
+<a class="sourceLine" id="cb13-3" title="3"><span class="co"># target &lt;-read.table(&#39;Yan_cell_label.csv&#39;,header=T,sep=&#39;,&#39;)  # read reference label</span></a>
+<a class="sourceLine" id="cb13-4" title="4"><span class="co"># head(target)</span></a>
+<a class="sourceLine" id="cb13-5" title="5"><span class="co"># # judge if the cell names are consistent</span></a>
+<a class="sourceLine" id="cb13-6" title="6"><span class="co"># aa &lt;-names(RST)</span></a>
+<a class="sourceLine" id="cb13-7" title="7"><span class="co"># bb &lt;-target$Cell_type</span></a>
+<a class="sourceLine" id="cb13-8" title="8"><span class="co"># # if consistent, continue to calculate ARI ect</span></a>
+<a class="sourceLine" id="cb13-9" title="9"><span class="co"># if (identical(sort(aa),sort(as.character(bb)))==&#39;TRUE&#39;){</span></a>
+<a class="sourceLine" id="cb13-10" title="10"><span class="co">#   sorted &lt;-RST[match(target$Cell_type,names(RST))] # sort the predicted label</span></a>
+<a class="sourceLine" id="cb13-11" title="11"><span class="co">#   ARI &lt;-adjustedRandIndex(sorted,target$Cluster)  </span></a>
+<a class="sourceLine" id="cb13-12" title="12"><span class="co">#   RI &lt;-adjustedRand(sorted,target$Cluster,randMethod=&#39;Rand&#39;)</span></a>
+<a class="sourceLine" id="cb13-13" title="13"><span class="co">#   FM &lt;-adjustedRand(sorted,target$Cluster,randMethod=&#39;FM&#39;)</span></a>
+<a class="sourceLine" id="cb13-14" title="14"><span class="co">#   JI &lt;-adjustedRand(sorted,target$Cluster,randMethod=&#39;Jaccard&#39;)</span></a>
+<a class="sourceLine" id="cb13-15" title="15"><span class="co">#   df &lt;-data.frame(ARI=ARI, RandIndex=RI,FolkesMallow=FM, Jaccard=JI)</span></a>
+<a class="sourceLine" id="cb13-16" title="16"><span class="co">#   df</span></a>
+<a class="sourceLine" id="cb13-17" title="17"><span class="co"># }</span></a></code></pre></div>
 <p>Note</p>
 <ul>
 <li>the reference labels used in this example is avaiable at <a href="https://github.com/zy26/BRICdata/blob/master/Example%20data/Yan_cell_label.csv" class="uri">https://github.com/zy26/BRICdata/blob/master/Example%20data/Yan_cell_label.csv</a></li>
