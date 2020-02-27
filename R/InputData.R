@@ -34,19 +34,4 @@ ReadFrom10X_folder <- function(input.dir=NULL,...){
   return(Gene_expression)
 }
 
-#' Read in gene expression matrix: cell in columns and gene in rows
-#'
-#' @param Input input gene expression matrix.
-#' @param sep defauld separator is tab.
-#' @param header
-#' @param rownames
-#' @param ... inherit function from read.delim
-#'
-#' @return
-#' @export
-#'
-#' @examples
-ReadFromMat<-function(input=NULL,sep="\t", header=TRUE, rownames=1, ...){
-  Input_Mat<-read.delim(input,sep = sep,header = header,rownames=rownames,...)
-  return(Input_Mat)
-}
+

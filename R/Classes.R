@@ -18,7 +18,9 @@ setClass("DimReduce",slots = c(
 setClass("Bicluster", slots = c(
   CoReg_gene = "ANY",
   CoCond_cell = "ANY",
-  Pathway = "ANY"
+  MarkerGene = "ANY",
+  PathwayFromMC = "ANY",
+  PathwayFromModule = "ANY"
 )
 )
 # create LTMG object
@@ -37,7 +39,7 @@ setClass("LTMGr", slots = c(
   DimReduce = "DimReduce",
   MarkerGene = "ANY",
   Pathway = "ANY",
-  tmp.seurat = "ANY"
+  Tmp.seurat = "ANY"
 )
 )
 # set BRIC class
@@ -55,8 +57,8 @@ setClass("LTMGr", slots = c(
 #' @rdname BRIC
 #' @exportClass BRIC
 setClass("BRIC",
-         slots=c(raw_count = "matrix",
-                 processed_count = "ANY",
+         slots=c(Raw_count = "matrix",
+                 Processed_count = "ANY",
                  MetaInfo = "ANY",
                  Discretization = "matrix",
                  LTMG = "LTMGr",

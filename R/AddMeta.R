@@ -15,16 +15,16 @@ NULL
   if(is.null(meta.info)){
     message("Do not provide meta info table for the object.")
     message("using original cell identity")
-    meta.info <- data.frame(row.names = as.character(colnames(object@raw_count)),
-                            Original = as.character(colnames(object@raw_count)),
-                            ncount_RNA = as.numeric(colSums(object@raw_count)))
+    meta.info <- data.frame(row.names = as.character(colnames(object@Raw_count)),
+                            Original = as.character(colnames(object@Raw_count)),
+                            ncount_RNA = as.numeric(colSums(object@Raw_count)))
     object@MetaInfo <- meta.info
   } else{
-    if (colnames(object@raw_count) != rownames(meta.info)){
+    if (colnames(object@Raw_count) != rownames(meta.info)){
       stop("\n There is inconsisten cell names between meta info and original raw count.
            \n Please check rownames of meta info and colnames of original raw count.")
     } else {
-        tmp.meta <- cbind(ncount_RNA = as.numeric(colSums(object@raw_count)), meta.info)
+        tmp.meta <- cbind(ncount_RNA = as.numeric(colSums(object@Raw_count)), meta.info)
         object@MetaInfo <- tmp.meta
       }
   }

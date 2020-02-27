@@ -12,6 +12,7 @@ NULL
   ident.index <- as.numeric(ident.index)
   tmp.ident <- object@MetaInfo[,ident.index]
   names(tmp.ident) <- rownames(object@MetaInfo)
+  label.used <- colnames(object@MetaInfo)[ident.index]
   # create index table
   tmp.group.table <- data.frame(index = 1:unique(tmp.ident), condition = as.character(sort(unique(tmp.ident))),stringsAsFactors = F)
   tmp.group.table <- rbind(tmp.group.table, c(nrow(tmp.group.table)+1,"rest of all"))
@@ -31,8 +32,6 @@ NULL
     new.condition[tmp.ident == group.1] <- group.1
     new.condition[tmp.ident != group.1] <- "all"
     results <- DEsingle(counts = tmp.expression.table, group = as.factor(new.condition))
-    results.classified <- DEtype(results = results, threshold = FDR)
-    object@LTMG@MarkerGene <- results.classified
   } else {
     new.condition <- vector(mode = "logical", length = length(tmp.ident))
     new.condition[tmp.ident == group.1] <- "TRUE"
@@ -40,9 +39,14 @@ NULL
     tmp.new.condition <- as.factor(as.character(tmp.ident)[new.condition == "TRUE"])
     tmp.expression.table <- tmp.expression.table[,new.condition == "TRUE"]
     results <- DEsingle(counts = tmp.expression.table, group = as.factor(tmp.new.condition))
-    results.classified <- DEtype(results = results, threshold = FDR)
+  }
+  results.classified <- DEtype(results = results, threshold = FDR)
+  if(grepl("BRIC", label.used, ignore.case = T)){
+    object@BiCluster@MarkerGene <- results.classified
+  } else {
     object@LTMG@MarkerGene <- results.classified
   }
+
   return(object)
 }
 

@@ -10,20 +10,21 @@ NULL
 #' @examples
 NULL
 
-#' @importFrom scater normalize
-#' @importFrom SingleCellExperiment SingleCellExperiment
+#' @importFrom scater normalize logNormCounts
+#' @importFrom SingleCellExperiment SingleCellExperiment normcounts
+#' @importFrom scran quickCluster computeSumFactors
 #' @importFrom Seurat as.sparse
 #' @importFrom DrImpute DrImpute
 
 .NormalizeData <- function(object = NULL, IsScaterNormal=FALSE, IsImputation = FALSE){
-  Input <- object@raw_count
+  Input <- object@Raw_count
   if(all(as.numeric(unlist(Input[nrow(Input),]))%%1==0)){
     ## normalization##############################
     if (IsScaterNormal == FALSE) {
       my.normalized.data <- Input
     } else{
       sce <- SingleCellExperiment(assays = list(counts = Input))
-      clusters <- quickCluster(sce)
+      clusters <- quickCluster(sce,min.size = floor(ncol(Input)/3))
       sce <- computeSumFactors(sce, clusters = clusters)
       sce <- scater::logNormCounts(sce,log = FALSE)
       my.normalized.data <- normcounts(sce)
@@ -42,10 +43,7 @@ NULL
 
   colnames(my.imputated.data) <- colnames(Input)
   rownames(my.imputated.data) <- rownames(Input)
-
-
-  my.imputated.data <- as.sparse(my.imputated.data)
-  object@processed_count <- my.imputated.data
+  object@Processed_count <- my.imputated.data
   return(object)
 }
 

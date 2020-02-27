@@ -1,5 +1,6 @@
 #' @include generics.R
 #' @include Classes.R
+#' @include LTMGSCA.R
 NULL
 
 #' @rdname MIN_return
@@ -242,12 +243,11 @@ LTMG<-function(VEC,Zcut_G,k=5){
 #' @name RunLTMG
 #' @return
 #' @importFrom AdaptGauss Intersect2Mixtures
-#' @importFrom LTMGSCA SeparateKRpkmNew
 #' @importFrom mixtools normalmixEM
 #' @importFrom stats sd
 #' @examples
 .RunLTMG <- function(object,Gene_use = NULL, seed = 123, k = 5){
-  MAT <- as.matrix(object@processed_count)
+  MAT <- as.matrix(object@Processed_count)
   set.seed(seed)
   MAT <- ifelse(is.na(MAT),0,MAT)
   MAT<- MAT[rowSums(MAT)>0,colSums(MAT)>0]

@@ -43,7 +43,7 @@ NULL
 .runDiscretization <- function(object = NULL, q = 0.05, LogTransformation = FALSE){
   message("writing temporary expression file ...")
   tmp.dir <- paste0(getwd(),"/tmp_expression.txt")
-  tmp.count<- object@processed_count
+  tmp.count<- object@Processed_count
   tmp.count <- cbind(ID=rownames(tmp.count),tmp.count)
   write.table(tmp.count, file = tmp.dir, row.names = F, quote = F, sep = "\t")
   message("create temporary discretize file")
@@ -122,7 +122,7 @@ setMethod("RunDiscretization", "BRIC", .runDiscretization)
     .runBiclusterBaseOnDiscretization(object = object, OpenDual = OpenDual, Extension = Extension,
                                       NumBlockOutput = NumBlockOutput, BlockOverlap = BlockOverlap, BlockCellMin = BlockCellMin)
   }
-  object <- .getBlock(object=object,keyword = "Conds")
+  object <- .getBlock(object = object,keyword = "Conds")
   object <- .getBlock(object = object, keyword = "Genes")
   return(object)
 

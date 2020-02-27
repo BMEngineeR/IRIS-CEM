@@ -2,7 +2,8 @@
 title: "BRIC vignette"
 subtitle: BRIC 
 abstract: BRIC integrates in-house and state-of-the-art computational tools and provides two analysis strategies, including LTMG (left-truncated mixture Gaussian model)-embedded scRNA-Seq analy-sis and co-expression gene analysis.
-date: "March 18, 2019"
+author: Yuzhou Chang
+date: "26 February, 2020"
 output:
   BiocStyle::html_document:
     number_sections: no
@@ -17,9 +18,39 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Intorduction to BRIC
 
+## General introduction 
 BRIC integrates in-house and state-of-the-art computational tools and provides two analysis strategies, including LTMG (left-truncated mixture Gaussian model)-embedded scRNA-Seq analysis and co-expression gene analysis.
 
-The main idea of BRIC consists of two major steps: (i) LTMG-based scRNA-seq analysis, and (ii) inferring the active GRS of each cell, and further its cell type or physiological state. Step (i) first utilized our in-house left truncated mixture Gaussian (LTMG) model for an accurate quantification of the sample specific GRS for each individual gene. Step (ii) utilized the set of active states of GRS within a cell for its cell type prediction. 
+## Main function
+
+The main idea of BRIC consists of two major strategies: 
+
+* (i) LTMG-based scRNA-seq analysis
+* (ii) co-expression gene module analysis.
+
+## Obejct structure 
+The computational frame is constructed under the S4 data structure in R. The structure of `BRIC object` is: 
+
+- -**BRIC_Object:** *name of object is called BRIC.*
+  - -**raw_count:** *raw data matrix (gene in row, cell in columns, prefer using gene symbol).*
+  - -**processed_count:** *normalized and imputation (default: FALSE).*
+  - -**Meta_info:** *cell classification information based on LTMG and Bicluster.*
+  - -**Discretization:** *discretized matrix based on qubic 1.0, which prepares for microarry and bulk RNA-Seq analysis.*
+  - -**LTMG:** *LTMG slot is for storing relative results from first strategy.*
+    - -**LTMG_discrete:** *Condition assigned matrix, which is generating from LTMG model.*
+    - -**LTMG_BinarySingleSignal:** *binary matrix based on gene “on /off.”*
+    - -**LTMG_BinaryMultisignal:** *binary matrix based on multiple condition.*
+    - -**DimReduce:** *include three dimension loading score, including PCA, Tsne, and UMAP*
+    - -**MarkerGene:** *Marker gene based on cell type identified by Seurat clustering method.*
+    - -**Pathway:** *based on marker gene.*
+    - -**tmp.Seurat:** *temporary Seurat object. In this Seurat Object, the starting matrix is LTMG signalling matrix.*
+  - -**Bicluster:** **
+    - -**Coreg_gene:** *co-regulatory genes are stored in this slot as dataframe; the first column is gene name and the second column is module number.*
+    - -**CoCond_cell:** *co-condition cell are stored in this slot as dataframe; the first column is cell name and the second column is module number.*
+    - -**MarkerGene:** *Marker gene based on cell type identified by Markov chain clustering algorithm.*
+    - -**Pathway:** *genes based on co-expression gene of gene module (from Coreg_gene).*
+
+
 
 
 
@@ -28,25 +59,34 @@ The main idea of BRIC consists of two major steps: (i) LTMG-based scRNA-seq anal
 
 We will assum you have the following installed:
 
-* R (current package tested based on R3.5.1, might work on lower version, though untested)
+* R (equal or greater than 3.5)
 
+Pre-install packge
+```{r pre_install, eval=FALSE, echo=TRUE}
+install.packages(c('devtools', 'AdaptGauss', "pheatmap", 'mixtools', 
+                   'qgraph','multtest','Rtools'))
+BiocManager::install(c('org.Mm.eg.db', 'org.Hs.eg.db','clusterProfiler','DEsingle',
+                       'DrImpute', 'scater', 'scran'))
+devtools::install_github(repo = 'satijalab/seurat')
+```
 ## Input
 
-The input to BRIC is the single-cell RNA-seq expression matrix:
+1. The input to BRIC is the single-cell RNA-seq expression matrix:
 
-* Rows correspond to genes and columns correspond to sampels(cells).
+* Rows correspond to genes and columns correspond to cells.
 * Expression units: the preferred expression values are RPKM/FPKM/CPM. 
 * The data file should be tab delimited.
+2. BRIC also accept output files from 10X CellRanger, includinhg a folder which contains three individual files and h5 file. 
 
 ## Others
 
-When you call the cell type prediction function, it will output several intermediate files, thus please make sure that you have write permission to the folder where BRIC is located. 
+When you perform co-expression analysis, it will output several intermediate files, thus please make sure that you have write permission to the folder where BRIC is located. 
 
 # Installation
 
 For installation, simply type the following command in your R console:
-```{r install, eval=FALSE}
-devtools::install_github("zy26/BRIC",force = T)
+```{r install, eval=FALSE, echo=TRUE}
+devtools::install_github("BMEngineeR/BRIC",force = T)
 ```
 
 # Example dataset
@@ -60,15 +100,16 @@ As example, we will use Yan's data, a dataset containing 90 cells and 20,214 gen
 The original expression matrix was downloaded from <https://s3.amazonaws.com/scrnaseq-public-datasets/manual-data/yan/nsmb.2660-S2.csv>. The expression is provided as RPKM value. For convenience, we removed the space in the column names and deleted the second column(Transcript_ID). The processed data is available at <https://github.com/zy26/BRICdata/blob/master/Example%20data/Yan_RPKM>.
 
 
+# Load data and create BRIC object. 
 # Biclustering
 
 BRCI can provide biclustering function, which is based on our in-house novel algorithm, QUBIC2 (<https://github.com/maqin2001/qubic2>). Here we will show the basic biclustering usage of BRIC using a $100 \times 90$ expression matrix extracted from Yan's data(available at <https://github.com/zy26/BRICdata/blob/master/Example%20data/Yan_sub.txt>). 
 
 You can type the following command to run discretization + biclustering directly:
-```{r biclustering}
-# setwd('/path/to/your/data')
+```{r biclustering,eval=FALSE,echo = TRUE}
+setwd('/path/to/your/data')
 library(BRIC)
-BRIC::qubic('Yan_sub.txt',R=TRUE)
+# BRIC::qubic('Yan_sub.txt',R=TRUE)
 ```
 
 This will output several files, and among them you will find one named  `Yan_sub.txt.chars.blocks`,which contains the predicted biclusters.
@@ -103,11 +144,11 @@ Which will automatically conduct `biclustering`and `cell type prediction`. Note 
 
 Or, you may first conduct `biclustering` and then provide the output *.chars* file to the`final()`function:
 ```{r discretize2,eval=FALSE}
-BRIC::qubic('Yan_RPKM',R=TRUE)
+# BRIC::qubic('Yan_RPKM',R=TRUE)
 ```
 ```{r two step}
-RST <-BRIC::final('Yan_RPKM.chars',d=TRUE,method='MCL') # Note that must add d=TRUE if use .chars as input
-head(RST)
+#RST <-BRIC::final('Yan_RPKM.chars',d=TRUE,method='MCL') # Note that must add d=TRUE if use .chars as input
+# head(RST)
 ```
 
 Both ways will give you a list of predicted cell labels
@@ -121,23 +162,23 @@ If you have reference label at hand, you can calculate some external criteria to
 
 
 ```{r calculate ARI}
-library(mclust)
-library(clues)
-target <-read.table('Yan_cell_label.csv',header=T,sep=',')  # read reference label
-head(target)
-# judge if the cell names are consistent
-aa <-names(RST)
-bb <-target$Cell_type
-# if consistent, continue to calculate ARI ect
-if (identical(sort(aa),sort(as.character(bb)))=='TRUE'){
-  sorted <-RST[match(target$Cell_type,names(RST))] # sort the predicted label
-  ARI <-adjustedRandIndex(sorted,target$Cluster)  
-  RI <-adjustedRand(sorted,target$Cluster,randMethod='Rand')
-  FM <-adjustedRand(sorted,target$Cluster,randMethod='FM')
-  JI <-adjustedRand(sorted,target$Cluster,randMethod='Jaccard')
-  df <-data.frame(ARI=ARI, RandIndex=RI,FolkesMallow=FM, Jaccard=JI)
-  df
-}
+# library(mclust)
+# library(clues)
+# target <-read.table('Yan_cell_label.csv',header=T,sep=',')  # read reference label
+# head(target)
+# # judge if the cell names are consistent
+# aa <-names(RST)
+# bb <-target$Cell_type
+# # if consistent, continue to calculate ARI ect
+# if (identical(sort(aa),sort(as.character(bb)))=='TRUE'){
+#   sorted <-RST[match(target$Cell_type,names(RST))] # sort the predicted label
+#   ARI <-adjustedRandIndex(sorted,target$Cluster)  
+#   RI <-adjustedRand(sorted,target$Cluster,randMethod='Rand')
+#   FM <-adjustedRand(sorted,target$Cluster,randMethod='FM')
+#   JI <-adjustedRand(sorted,target$Cluster,randMethod='Jaccard')
+#   df <-data.frame(ARI=ARI, RandIndex=RI,FolkesMallow=FM, Jaccard=JI)
+#   df
+# }
 ```
 
 

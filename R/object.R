@@ -8,12 +8,12 @@
 #' @export
 #'
 #' @examples
-CreateBRICObject <- function(x = input_matrix,
+CreateBRICObject <- function(x = input_matrix, min.cell = 0, min.gene =0,
                              LTMGr = new(Class = "LTMGr"),
                              Bicluster = new(Class = "Bicluster")) {
-  BRIC_Object<- new(Class = 'BRIC', raw_count = x)
+  raw.matrix <- as.matrix(x)
+  raw.matrix.filterbycell <- raw.matrix[(rowSums(raw.matrix > 0) > min.cell),]
+  raw.matrix.filterbygene <- raw.matrix.filterbycell[(colSums(raw.matrix.filterbycell > 0) > min.gene),]
+  BRIC_Object<- new(Class = 'BRIC', Raw_count =  raw.matrix.filterbygene)
   return(BRIC_Object)
 }
-
-
-
