@@ -27,7 +27,7 @@ NULL
 #' @param method
 #'
 #' @return
-#' @rdname PlotNetwork
+#' @name PlotNetwork
 #' @examples
 .qunetwork <-  function(object = NULL, Bic.index = 1, method = c("pearson", "kendall", "spearman"), is.plot = TRUE) {
 

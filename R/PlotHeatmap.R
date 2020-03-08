@@ -1,10 +1,12 @@
 #' @include generics.R
 #' @include Classes.R
 NULL
-#' @param object
+
+#' plot heatmap based on bicluster
 #'
-#' @param N.block
-#'
+#' @param object BRIC object
+#' @param N.block number of blocks
+#' @name PlotHeatmap
 #' @import pheatmap
 .plotHeatmap <- function(object = object, N.block = 2){
   condition.index <- 1:N.block

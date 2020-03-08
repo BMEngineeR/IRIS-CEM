@@ -135,7 +135,7 @@ object <- AddMeta(object, meta.info = NULL)
 
 This step is optional. User can choose perform normalization or imputation based on their need (default is closed both two methods). The normalization method is from package scran and can be opened by using parameter `IsScaterNormal = TRUE`. The imputation method is from package DrImpute and can be opened by using parameter `IsImputation = TRUE`.
 ```{r add_metadata, eval= FALSE, echo=TRUE}
-object <- ProceeData(object,IsScaterNormal=FALSE, IsImputation = FALSE)
+object <- ProcessData(object,IsScaterNormal=FALSE, IsImputation = FALSE)
 ```
 
 # LTMG mod

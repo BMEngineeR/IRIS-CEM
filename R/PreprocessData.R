@@ -1,10 +1,16 @@
 #' @include generics.R
 NULL
 
+#' Process data
+#'
+#' @description  Process data via normalization and imputation.
 #' @param object
 #'
 #' @param normalization two options: (1)library size noralization by using library size factor: 1e6, equal to CPM, or (2) using "scran" normalization method.
-#' @param IsImputation
+#' @param seed set seed for reproducibility.
+#' @param IsImputation imputation method is provided by DrImpute. Default is FALSE.
+#'
+#' @name ProcessData
 #'
 #' @importFrom scater normalize logNormCounts
 #' @importFrom SingleCellExperiment SingleCellExperiment normcounts
@@ -48,7 +54,7 @@ NULL
 
 
 #' @export
-#' @rdname NormalizeData
+#' @rdname ProcessData
 setMethod("ProcessData", "BRIC", .processData)
 
 

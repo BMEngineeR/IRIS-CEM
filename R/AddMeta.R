@@ -8,6 +8,7 @@ NULL
 #' @param meta.info meta information table should be a data frame with rows representing cell and coloumn representing different group condition
 #'
 #' @return
+#' @name AddMeta
 #' @examples
 .addMeta <- function(object = NULL, meta.info = NULL){
   if(is.null(meta.info)){
