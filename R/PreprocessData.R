@@ -45,7 +45,6 @@ NULL
   } else {
     my.imputated.data <- my.normalized.data
   }
-  if (all(IsScaterNormal,IsImputation))
   colnames(my.imputated.data) <- colnames(Input)
   rownames(my.imputated.data) <- rownames(Input)
   object@Processed_count <- my.imputated.data
