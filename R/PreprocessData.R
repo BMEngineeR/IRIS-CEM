@@ -3,7 +3,7 @@ NULL
 
 #' @param object
 #'
-#' @param IsScaterNormal whether open normalization
+#' @param normalization two options: (1)library size noralization by using library size factor: 1e6, equal to CPM, or (2) using "scran" normalization method.
 #' @param IsImputation
 #'
 #' @importFrom scater normalize logNormCounts
@@ -12,13 +12,16 @@ NULL
 #' @importFrom Seurat as.sparse
 #' @importFrom DrImpute DrImpute
 
-.processData <- function(object = NULL, IsScaterNormal=FALSE, IsImputation = FALSE){
-  Input <- object@Raw_count
-  if(all(as.numeric(unlist(Input[nrow(Input),]))%%1==0)){
+.processData <- function(object = NULL, normalization = "LibrarySizeNormalization", IsImputation = FALSE, seed = 123){
+  if(is.null(object@MetaInfo)){stop("Can not find meta data, please run AddMeta")}
+  Input <- object@Raw_count[,rownames(object@MetaInfo)]
+  set.seed(seed)
+  random.number <- sample(c(1:nrow(Input)),100)
+  if(all(as.numeric(unlist(Input[random.number,]))%% 1== 0)){
     ## normalization##############################
-    if (IsScaterNormal == FALSE) {
-      my.normalized.data <- Input
-    } else{
+    if (grepl("librarysizenormalization", ignore.case = T,normalization)) {
+      my.normalized.data <- (Input/colSums(Input))*1000000
+    } else if (grepl("scran", ignore.case = T,normalization)){
       sce <- SingleCellExperiment(assays = list(counts = Input))
       clusters <- quickCluster(sce,min.size = floor(ncol(Input)/3))
       sce <- computeSumFactors(sce, clusters = clusters)
@@ -36,7 +39,7 @@ NULL
   } else {
     my.imputated.data <- my.normalized.data
   }
-
+  if (all(IsScaterNormal,IsImputation))
   colnames(my.imputated.data) <- colnames(Input)
   rownames(my.imputated.data) <- rownames(Input)
   object@Processed_count <- my.imputated.data

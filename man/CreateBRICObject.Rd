@@ -13,10 +13,14 @@ CreateBRICObject(
 )
 }
 \arguments{
-\item{x}{}
+\item{x}{input expression matrix which should be a matrix or dataframe.}
+
+\item{min.cell}{each gene should be expressed by at least this many cell.}
+
+\item{min.gene}{each cell should express this many gene at least.}
 }
 \value{
-
+it should return a BRIC object of which structure can be found in tutorial.
 }
 \description{
 Title

@@ -63,8 +63,8 @@ We will assum you have the following installed:
 
 Pre-install packge
 ```{r pre_install, eval=FALSE, echo=TRUE}
-install.packages(c('devtools', 'AdaptGauss', "pheatmap", 'mixtools', 
-                   'qgraph','multtest','Rtools'))
+install.packages(c('devtools', 'AdaptGauss', "pheatmap", 'mixtools','MCL', 'anocva', 
+                   'qgraph','multtest','Rtools','ggpubr'))
 BiocManager::install(c('org.Mm.eg.db', 'org.Hs.eg.db','clusterProfiler','DEsingle',
                        'DrImpute', 'scater', 'scran'))
 devtools::install_github(repo = 'satijalab/seurat')
