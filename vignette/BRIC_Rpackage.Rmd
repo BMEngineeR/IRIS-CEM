@@ -106,39 +106,85 @@ BRIC can accepted 10X chromium input files, including a folder (contain gene nam
 
 ## Input data
 
-1. Read from 10X folder.
 
-```{r folder, eval= FALSE, echo=TRUE}
-InputMatrix <- BRIC::ReadFrom10X_folder(system.file("inst/extdata/10X_3K/folder_10X/"))
+1. Read from .h5 file.
+
+```{r h5_files, eval= TRUE, echo=TRUE}
+InputMatrix <- BRIC::ReadFrom10X_h5("../inst/extdata/10X_5K/5k_pbmc_protein_v3_filtered_feature_bc_matrix.h5")
 ```
 
-2. Read from .h5 file.
+2. Read from 10X folder.
 
-```{r h5_files, eval= FALSE, echo=TRUE}
-InputMatrix <- BRIC::ReadFrom10X_h5(system.file("extdata","5k_pbmc_protein_v3_filtered_feature_bc_matrix.h5", package = "BRIC"))
+```{r folder, eval= TRUE, echo=TRUE}
+InputMatrix <- BRIC::ReadFrom10X_folder("../inst/extdata/10X_3K/folder_10X/")
 ```
 
 ## Add meta information
 
 1. Create BRIC object.
 
-```{r create_object, eval= FALSE, echo=TRUE}
-object <- CreateBRICObject(InputMatrix)
+```{r create_object, eval= TRUE, echo=TRUE}
+object <- BRIC::CreateBRICObject(InputMatrix)
 ```
 
 2. Addmeta: this step can add customized cell label by user, the format of file passing to `meta.info` is data frame of which row name should be cell ID, and column name should be cell type.    
-```{r add_metadata, eval= FALSE, echo=TRUE}
-object <- AddMeta(object, meta.info = NULL)
+```{r add_metadata, eval= TRUE, echo=TRUE}
+object <- BRIC::AddMeta(object, meta.info = NULL)
+```
+
+3. plotmeta: plot meta information based on RNA count and Feature number. This step is for the following subset step in terms of filtering out low quality data.    
+```{r plot_metadata, eval= FALSE, echo=TRUE}
+BRIC::PlotMeta(object)
+```
+![](C:/analysis_work\BRIC\LTMG_track\metaplot.png)
+
+4. remove low quality data based on the previous plot.
+```{r subset_data, eval= TRUE, echo=TRUE}
+object <- BRIC::SubsetData(object , nFeature.upper=3000,nFeature.lower=100,
+                         Counts.upper=10000,Counts.lower=100)
 ```
 
 ## Preprocesing 
 
-This step is optional. User can choose perform normalization or imputation based on their need (default is closed both two methods). The normalization method is from package scran and can be opened by using parameter `IsScaterNormal = TRUE`. The imputation method is from package DrImpute and can be opened by using parameter `IsImputation = TRUE`.
-```{r add_metadata, eval= FALSE, echo=TRUE}
-object <- ProcessData(object,IsScaterNormal=FALSE, IsImputation = FALSE)
+This step is optional. User can choose perform normalization or imputation based on their need (default is closed both two methods). The normalization method is from package scran and can be opened by using parameter `normalization = 'LibrarySizeNormalization'`. The imputation method is from package DrImpute and can be opened by using parameter `IsImputation = TRUE`.
+```{r ProcessData, eval= TRUE, echo=TRUE}
+object <- BRIC::ProcessData(object, normalization = "LibrarySizeNormalization", IsImputation = FALSE, seed = 123)
 ```
 
-# LTMG mod
+
+
+
+# Run LTMG
+
+the argument `Gene_use = 2000` is top variant genes which are selected to run LTMG. For LTMG strategy, we recommend to use top 2000 gene. On the contrary, for co-expression gene analysis, we recommend to use all gene by changing `Gene_use = "all"`. 
+```{r run_LTMG, eval= TRUE, echo=TRUE}
+# demo only run top 500 gene for saving time.
+object <- BRIC::RunLTMG(object, Gene_use = 50, seed = 123)
+```
+
+# LTMG strategy
+
+## Dimension Reduction
+```{r Run_dimReduce, eval= TRUE, echo=TRUE}
+# demo only run top 500 gene for saving time.
+object <- BRIC::RunDimensionReduction(object, reduction = "umap")
+```
+
+## cluster
+```{r Runclassfication, eval= TRUE, echo=TRUE}
+# demo only run top 500 gene for saving time.
+object <- BRIC::RunClassification(object,  k.param = 20, resolution = 0.5, algorithm = 1)
+```
+
+## plot dimension reduction plot
+```{r run_plotDim, eval= FALSE, echo=TRUE}
+# demo only run top 500 gene for saving time.
+PlotDimension(object,reduction = "umap")
+```
+THis function need user to input gorup that want to plot on the figure. Input `4` means choose the Seurat0.5 group as cell label to plot.
+![dim](C:/analysis_work\\BRIC\\LTMG_track\\PlotDimentsion.png)
+![cluster](C:/analysis_work\BRIC\LTMG_track\cluster.png)
+
 # Biclustering
 
 BRCI can provide biclustering function, which is based on our in-house novel algorithm, QUBIC2 (<https://github.com/maqin2001/qubic2>). Here we will show the basic biclustering usage of BRIC using a $100 \times 90$ expression matrix extracted from Yan's data(available at <https://github.com/zy26/BRICdata/blob/master/Example%20data/Yan_sub.txt>). 
