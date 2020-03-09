@@ -29,7 +29,7 @@ ProcessData(object, ...)
 
 \item{IsImputation}{imputation method is provided by DrImpute. Default is FALSE.}
 
-\item{seed}{set sed for reproducibility.}
+\item{seed}{set seed for reproducibility.}
 }
 \description{
 Process data via normalization and imputation.
