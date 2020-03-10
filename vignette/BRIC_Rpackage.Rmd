@@ -177,7 +177,7 @@ object <- BRIC::RunClassification(object,  k.param = 20, resolution = 0.5, algor
 ```
 
 ## plot dimension reduction plot
-```{r run_plotDim, eval= FALSE, echo=TRUE}
+```{r run_plotDim, eval= TRUE, echo=TRUE}
 # demo only run top 500 gene for saving time.
 PlotDimension(object,reduction = "umap")
 ```
