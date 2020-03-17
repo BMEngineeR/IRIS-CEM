@@ -56,7 +56,7 @@ setClass("LTMGr", slots = c(
 #' @rdname BRIC
 #' @exportClass BRIC
 setClass("BRIC",
-         slots=c(Raw_count = "matrix",
+         slots=c(Raw_count = "ANY",
                  Processed_count = "ANY",
                  MetaInfo = "ANY",
                  Discretization = "matrix",

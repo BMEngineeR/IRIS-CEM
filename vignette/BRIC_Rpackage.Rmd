@@ -9,7 +9,10 @@ output:
     number_sections: no
     toc: yes
     highlight: pygments
-    
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
 ---
 
 ```{r setup, include=FALSE}
@@ -109,14 +112,18 @@ BRIC can accepted 10X chromium input files, including a folder (contain gene nam
 
 1. Read from .h5 file.
 
-```{r h5_files, eval= TRUE, echo=TRUE}
+```{r h5_files, eval= FALSE, echo=TRUE}
 InputMatrix <- BRIC::ReadFrom10X_h5("../inst/extdata/10X_5K/5k_pbmc_protein_v3_filtered_feature_bc_matrix.h5")
 ```
 
 2. Read from 10X folder.
 
-```{r folder, eval= TRUE, echo=TRUE}
+```{r folder, eval= FALSE, echo=TRUE}
 InputMatrix <- BRIC::ReadFrom10X_folder("../inst/extdata/10X_3K/folder_10X/")
+```
+3. Read from .csv or .txt file
+```{r folder, eval= TRUE, echo=TRUE}
+InputMatrix <- read.table("d:/my_analysis/BRIC_TEST/2.Yan/Yan_expression.txt",header = T, row.names = 1)
 ```
 
 ## Add meta information
@@ -162,7 +169,7 @@ the argument `Gene_use = 2000` is top variant genes which are selected to run LT
 object <- BRIC::RunLTMG(object, Gene_use = 50, seed = 123)
 ```
 
-# LTMG strategy
+# cluster strategy
 
 ## Dimension Reduction
 ```{r Run_dimReduce, eval= TRUE, echo=TRUE}
