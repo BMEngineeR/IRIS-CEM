@@ -22,9 +22,3 @@ The output from \code{\link{Read10X_h5}}
 \description{
 Read 10X HDF5 file based on Seurat package
 }
-\examples{
-\dontmy.path{
-my.matrix<-ReadFrom10X_h5("path/to/data/files")
-}
-
-}
