@@ -6,10 +6,6 @@
 #' @export
 #' @importFrom Matrix sparseMatrix
 #' @examples
-#' \dontmy.path{
-#' my.matrix<-ReadFrom10X_h5("path/to/data/files")
-#' }
-#'
 ReadFrom10X_h5<-function(input=NULL,use.names = TRUE, unique.features = TRUE){
   if (!requireNamespace("hdf5r", quietly = TRUE)) {
     stop("Please install hdf5r by using install.packages('hdf5r')")
