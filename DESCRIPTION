@@ -9,7 +9,7 @@ Description: One paragraph description of what the package does as one or more f
 License: MIT
 Imports: Rcpp (>= 1.0.0), MCL, anocva, igraph
 LinkingTo: Rcpp
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 Collate: 
     'Classes.R'
     'generics.R'
