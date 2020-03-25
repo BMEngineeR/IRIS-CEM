@@ -4,7 +4,7 @@
 \alias{.runDiscretization}
 \title{run discretization}
 \usage{
-.runDiscretization(object = NULL, q = 0.05, LogTransformation = FALSE)
+.runDiscretization(object = NULL, q = 0.06, LogTransformation = FALSE)
 }
 \arguments{
 \item{q}{}

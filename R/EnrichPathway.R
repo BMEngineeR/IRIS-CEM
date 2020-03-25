@@ -44,8 +44,8 @@ NULL
 #' @import org.Mm.eg.db org.Hs.eg.db
 #' @importFrom AnnotationDbi select
 .runPathway <- function(object = NULL,module.number = NULL, selected.gene.cutoff = 0.05,
-                        species = "Human", database = "GO", genes.source = "LTMG"){
-  if (genes.source == "LTMG"){
+                        species = "Human", database = "GO", genes.source = "CTS"){
+  if (genes.source == "CTS"){
     tmp.table<- object@LTMG@MarkerGene
     genes.use.LTMG <- rownames(tmp.table)[tmp.table$pvalue.adj.FDR < selected.gene.cutoff]
     if(database == "GO"){

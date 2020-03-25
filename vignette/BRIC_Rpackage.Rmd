@@ -66,7 +66,7 @@ We will assum you have the following installed:
 
 Pre-install packge
 ```{r pre_install, eval=FALSE, echo=TRUE}
-install.packages(c('devtools', 'AdaptGauss', "pheatmap", 'mixtools','MCL', 'anocva', 
+install.packages(c('BiocManager','devtools', 'AdaptGauss', "pheatmap", 'mixtools','MCL', 'anocva', 
                    'qgraph','multtest','Rtools','ggpubr'))
 BiocManager::install(c('org.Mm.eg.db', 'org.Hs.eg.db','clusterProfiler','DEsingle',
                        'DrImpute', 'scater', 'scran'))
@@ -89,7 +89,7 @@ When you perform co-expression analysis, it will output several intermediate fil
 
 For installation, simply type the following command in your R console:
 ```{r install, eval=FALSE, echo=TRUE}
-devtools::install_github("BMEngineeR/BRIC",force = T)
+devtools::install_github("BMEngineeR/BRIC", ref ="Beta",force = T)
 ```
 
 # Example dataset
@@ -103,26 +103,32 @@ As example, we will use Yan's data, a dataset containing 90 cells and 20,214 gen
 The original expression matrix was downloaded from <https://s3.amazonaws.com/scrnaseq-public-datasets/manual-data/yan/nsmb.2660-S2.csv>. The expression is provided as RPKM value. For convenience, we removed the space in the column names and deleted the second column(Transcript_ID). The processed data is available at <https://github.com/zy26/BRICdata/blob/master/Example%20data/Yan_RPKM>.
 
 
-# Input data, create BRIC object, add meta information, and preprocessing. 
+# 1. Input data, create BRIC object, add meta information, and preprocessing. 
 
 BRIC can accepted 10X chromium input files, including a folder (contain gene name, cell name, and sparse matrix) and .h5 file.
 
 ## Input data
 
-
-1. Read from .h5 file.
+1. set working directory
+```{r setwd, eval =FALSE, echo =TRUE}
+setwd("d:/my_analysis/BRIC_TEST/2.Yan/")
+```
+2. Read from .h5 file.
 
 ```{r h5_files, eval= FALSE, echo=TRUE}
 InputMatrix <- BRIC::ReadFrom10X_h5("../inst/extdata/10X_5K/5k_pbmc_protein_v3_filtered_feature_bc_matrix.h5")
 ```
 
-2. Read from 10X folder.
+3. Read from 10X folder.
 
 ```{r folder, eval= FALSE, echo=TRUE}
 InputMatrix <- BRIC::ReadFrom10X_folder("../inst/extdata/10X_3K/folder_10X/")
 ```
-3. Read from .csv or .txt file
-```{r folder, eval= TRUE, echo=TRUE}
+4. Read from .csv or .txt file
+
+we will use this data set as example to run the pipeline.
+
+```{r txt, eval= TRUE, echo=TRUE}
 InputMatrix <- read.table("d:/my_analysis/BRIC_TEST/2.Yan/Yan_expression.txt",header = T, row.names = 1)
 ```
 
@@ -140,15 +146,15 @@ object <- BRIC::AddMeta(object, meta.info = NULL)
 ```
 
 3. plotmeta: plot meta information based on RNA count and Feature number. This step is for the following subset step in terms of filtering out low quality data.    
-```{r plot_metadata, eval= FALSE, echo=TRUE}
+```{r plot_metadata, eval= TRUE, echo=TRUE}
 BRIC::PlotMeta(object)
 ```
-![](C:/analysis_work\BRIC\LTMG_track\metaplot.png)
+
 
 4. remove low quality data based on the previous plot.
 ```{r subset_data, eval= TRUE, echo=TRUE}
-object <- BRIC::SubsetData(object , nFeature.upper=3000,nFeature.lower=100,
-                         Counts.upper=10000,Counts.lower=100)
+object <- BRIC::SubsetData(object , nFeature.upper=15000,nFeature.lower=8000,
+                         Counts.upper=700000,Counts.lower=400000)
 ```
 
 ## Preprocesing 
@@ -159,122 +165,112 @@ object <- BRIC::ProcessData(object, normalization = "LibrarySizeNormalization", 
 ```
 
 
+# 2. Run LTMG
 
-
-# Run LTMG
-
-the argument `Gene_use = 2000` is top variant genes which are selected to run LTMG. For LTMG strategy, we recommend to use top 2000 gene. On the contrary, for co-expression gene analysis, we recommend to use all gene by changing `Gene_use = "all"`. 
-```{r run_LTMG, eval= TRUE, echo=TRUE}
+The argument `Gene_use = 2000` is  top 2000 variant genes which are selected to run LTMG. For LTMG strategy, we recommend to use top 2000 gene. On the contrary, for co-expression gene analysis, we recommend to use all gene by changing `Gene_use = "all"`. 
+```{r run_LTMG, eval= FALSE, echo=TRUE}
 # demo only run top 500 gene for saving time.
-object <- BRIC::RunLTMG(object, Gene_use = 50, seed = 123)
+object <- BRIC::RunLTMG(object, Gene_use = 2000, seed = 123)
 ```
 
-# cluster strategy
+# 3. Quick mode.
 
 ## Dimension Reduction
-```{r Run_dimReduce, eval= TRUE, echo=TRUE}
+User can use `reduction = "umap"` or `reductopm = "tsne"` to perform dimension reduction. 
+```{r Run_dimReduce, eval= FALSE, echo=TRUE}
 # demo only run top 500 gene for saving time.
 object <- BRIC::RunDimensionReduction(object, reduction = "umap")
 ```
 
-## cluster
-```{r Runclassfication, eval= TRUE, echo=TRUE}
+## Cluster
+```{r Runclassfication, eval= FALSE, echo=TRUE}
 # demo only run top 500 gene for saving time.
 object <- BRIC::RunClassification(object,  k.param = 20, resolution = 0.5, algorithm = 1)
 ```
 
-## plot dimension reduction plot
-```{r run_plotDim, eval= TRUE, echo=TRUE}
+## Plot dimension reduction plot
+```{r run_plotDim, eval= FALSE, echo=TRUE}
 # demo only run top 500 gene for saving time.
 PlotDimension(object,reduction = "umap")
 ```
 THis function need user to input gorup that want to plot on the figure. Input `4` means choose the Seurat0.5 group as cell label to plot.
-![dim](C:/analysis_work\\BRIC\\LTMG_track\\PlotDimentsion.png)
-![cluster](C:/analysis_work\BRIC\LTMG_track\cluster.png)
+![dim](D:/my_analysis\\BRIC_TEST\\figures\\LTMG\\dimension_selection.png)
+![cluster](D:/my_analysis\\BRIC_TEST\\figures\\LTMG\\dimension_plot.png)
 
-# Biclustering
 
-BRCI can provide biclustering function, which is based on our in-house novel algorithm, QUBIC2 (<https://github.com/maqin2001/qubic2>). Here we will show the basic biclustering usage of BRIC using a $100 \times 90$ expression matrix extracted from Yan's data(available at <https://github.com/zy26/BRICdata/blob/master/Example%20data/Yan_sub.txt>). 
+# 4. Biclustering based co-expression analysis
 
-You can type the following command to run discretization + biclustering directly:
-```{r biclustering,eval=FALSE,echo = TRUE}
-setwd('/path/to/your/data')
-library(BRIC)
-# BRIC::qubic('Yan_sub.txt',R=TRUE)
+BRCI can provide biclustering function, which is based on our in-house novel algorithm, QUBIC2 (<https://github.com/maqin2001/qubic2>). Here we will show the basic biclustering usage of BRIC using a $200\times 88$ expression matrix generated from previous top 2000 variant genes. However, we recommend user should use `Gene_use = all` to generate LTMG matrix. 
+
+## LTMG-discretized bicluster (recommand for single cell RNA-seq data)
+You can type the following command to run discretization (LTMG) + biclustering directly:
+```{r biclustering_basedLTMG,eval= FALSE,echo = TRUE}
+object <- BRIC::RunLTMG(object, Gene_use = 200, seed = 123)
+object <- BRIC::CalBinaryMultiSignal(object)
+object <- BRIC::RunBicluster(object, DiscretizationModel = "LTMG",OpenDual = TRUE, Extension = 0.90,
+                          NumBlockOutput = 100, BlockOverlap = 0.7, BlockCellMin = 15)
+
 ```
+
+## Quantile-discretized bicluster (recommand for bulk RNA-Seq or microarray data)
 
 This will output several files, and among them you will find one named  `Yan_sub.txt.chars.blocks`,which contains the predicted biclusters.
-
-Or, you may first type the following command to discretized the data:
-```{r discretize,eval=FALSE}
-BRIC::qubic('Yan_sub.txt',R=TRUE,F=TRUE)
+Or, user may use first version discretization strategy provided by QUBIC 1.0.
+```{r biclustering_basedQuantile,eval=FALSE,echo = TRUE}
+object <- BRIC::RunBicluster(object, DiscretizationModel = "Quantile",OpenDual = TRUE, Extension = 0.90,
+                          NumBlockOutput = 100, BlockOverlap = 0.7, BlockCellMin = 15)
 ```
 
-When this step is done(you will find some files, including `Yan_sub.txt.chars`), type the following command to run biclustering:
-```{r biclustering2, eval=FALSE}
-BRIC::qubic('Yan_sub.txt.chars',d=TRUE)
+(The default parameters in BRIC are BlockCellMin=15, BlockOverlap=0.7, Extension=0.90, NumBlockOutput=100 you may use other parameters as you like, just specify them in the argument)
+
+## Cell type prediction based on Markove clustering
+
+The cell type prediction of BRIC is based on the biclustering results. In short, it will construct a weighted graph based on the biclusters and then do clustering on the weighted graph. Currently, we provide two commonly used clustering method: MCL .
+
+
+```{r cell_type,eval=FALSE}
+
+object <- BRIC::FindClassBasedOnMC(object)
 ```
-Which will also output a file named `Yan_sub.txt.chars.blocks`.
+## Visualize block and network.
 
-Note that the second way run discretization and biclustering seperately. Since discretization ususally take a long time, we recommend to use the second way. In this case, you can try biclustering parameters as needed based on the discretized data, avoiding wasting time on discretization.
-
-(The default parameters in BRIC are k=13, f=0.85, c=0.90,o=5000, you may use other parameters as you like, just specify them in the argument, e.g., BRIC::qubic('Yan_sub.txt',R=TRUE,k=8,f=0.90,c=0.95,o=1000))
-
-# Cell type prediction
-
-The cell type prediction of BRIC is based on the biclustering results. In short, it will construct a weighted graph based on the biclusters and then do clustering on the weighted graph. Currently, we provide two commonly used clustering methods: MCL and spectral clustering.
-
-To do cell type prediction, you can call the `final()`function, using expression matrix as input:
-
-```{r,eval=FALSE, cell_type}
-
-RST <-BRIC::final('Yan_RPKM',R=TRUE,method='MCL')
+```{r visualize_block, eval = FALSE, echo =TRUE }
+BRIC::PlotHeatmap(object)
 ```
+![blockheatmap](D:/my_analysis\\BRIC_TEST\\figures\\bicluster\\blockheatmap.png)
 
-Which will automatically conduct `biclustering`and `cell type prediction`. Note that it may take quite a long time to finish, as the discretization step of the biclustering is time-consuming.
-
-Or, you may first conduct `biclustering` and then provide the output *.chars* file to the`final()`function:
-```{r discretize2,eval=FALSE}
-# BRIC::qubic('Yan_RPKM',R=TRUE)
+```{r visualize_network, eval = FALSE, echo =TRUE }
+BRIC::PlotNetwork(object, Bic.index = 1, method = "pearson")
 ```
-```{r two step}
-#RST <-BRIC::final('Yan_RPKM.chars',d=TRUE,method='MCL') # Note that must add d=TRUE if use .chars as input
-# head(RST)
+![network](D:/my_analysis\\BRIC_TEST\\figures\\bicluster\\network.png)
+
+# 5. Biological interpretation. 
+## Cell-type-specific marker genes
+```{r CTS_marker_gene, eval = FALSE, echo =TRUE}
+object <- FindMarkers(object)
 ```
+User need to select cell type to compare, while here we select `4:Suerat0.5` as cell type category to analyze.
+![markergene](D:/my_analysis\\BRIC_TEST\\figures\\LTMG\\markergebe_selection.png)
 
-Both ways will give you a list of predicted cell labels
+Then BRIC will ask user choose a first group as reference, while here we select the third group (`3 : 2`) marked as cluster 2 in umap.
+![markergene](D:/my_analysis\\BRIC_TEST\\figures\\LTMG\\markergene_1stGroup.png)
 
-Note:
+Then user requires to select the second group as compared object, while here user can choose either one group (`2 : 1`, `3 : 2`), or rest of all groups (`4 : rest of all`). 
+![markergene](D:/my_analysis\\BRIC_TEST\\figures\\LTMG\\markergene_2stGroup.png)
 
-* By default, BRIC use *MCL* clustering. You may choose spectral clustering, and if so,you also need to specify the number of cell types(e.g., 6). In that case, you need to to call the function in this way: `BRIC::final('Yan_RPKM.chars,d=TRUE,method='SC',K=6)`
+After running the `Findmarker`, user can find table in `object@LTMG@MarkerGene` if using quick mode or find table in `object@BiCluster@MarkerGene`.
 
-
-If you have reference label at hand, you can calculate some external criteria to evaluate the agreement between predicted cell labels and reference labels:
-
-
-```{r calculate ARI}
-# library(mclust)
-# library(clues)
-# target <-read.table('Yan_cell_label.csv',header=T,sep=',')  # read reference label
-# head(target)
-# # judge if the cell names are consistent
-# aa <-names(RST)
-# bb <-target$Cell_type
-# # if consistent, continue to calculate ARI ect
-# if (identical(sort(aa),sort(as.character(bb)))=='TRUE'){
-#   sorted <-RST[match(target$Cell_type,names(RST))] # sort the predicted label
-#   ARI <-adjustedRandIndex(sorted,target$Cluster)  
-#   RI <-adjustedRand(sorted,target$Cluster,randMethod='Rand')
-#   FM <-adjustedRand(sorted,target$Cluster,randMethod='FM')
-#   JI <-adjustedRand(sorted,target$Cluster,randMethod='Jaccard')
-#   df <-data.frame(ARI=ARI, RandIndex=RI,FolkesMallow=FM, Jaccard=JI)
-#   df
-# }
+## Cell-type-specific pathways.
+The first pathway analysis is based on quick mode by specifying `genes.source = "CTS"`, which means cell-type-specific marker genes; the second pathway analysis is based on genes from bicluster block. 
+```{r CTS_pathways, eval = FALSE, echo =TRUE}
+object <- RunPathway(object, selected.gene.cutoff = 0.05,
+                        species = "Human", database = "GO", genes.source = "LTMG")
+object <- RunPathway(object ,module.number = 1, selected.gene.cutoff = 0.05,
+                        species = "Human", database = "GO", genes.source = "Bicluster")
 ```
 
 
-Note
 
-* the reference labels used in this example is avaiable at <https://github.com/zy26/BRICdata/blob/master/Example%20data/Yan_cell_label.csv>
-* you may need to sort the predicted labels first
-* make sure that the cell names used in predicted label and reference labels are consistent
+```{r}
+sessionInfo()
+```

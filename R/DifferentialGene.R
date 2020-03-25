@@ -2,9 +2,14 @@
 #' @include Classes.R
 NULL
 
+#' @param object BRIC object
+#'
+#' @param SimpleResult marker gene only output log fold change (LFC), p-value, and adjusted p-value.
+#' @param FDR a number to specify the threshold of FDR, default by 0.05
+#'
 #' @importFrom DEsingle DEsingle DEtype
 #'
-.findMarkers <- function(object, FDR = 0.05){
+.findMarkers <- function(object,SimpleResult = T, FDR = 0.05){
   # two group number as factor.
   message("select condition to compare")
   message(paste0(c(1:ncol(object@MetaInfo))," : ",c(colnames(object@MetaInfo)),"\n"))
@@ -14,7 +19,7 @@ NULL
   names(tmp.ident) <- rownames(object@MetaInfo)
   label.used <- colnames(object@MetaInfo)[ident.index]
   # create index table
-  tmp.group.table <- data.frame(index = 1:unique(tmp.ident), condition = as.character(sort(unique(tmp.ident))),stringsAsFactors = F)
+  tmp.group.table <- data.frame(index = 1:length(unique(tmp.ident)), condition = as.character(sort(unique(tmp.ident))),stringsAsFactors = F)
   tmp.group.table <- rbind(tmp.group.table, c(nrow(tmp.group.table)+1,"rest of all"))
   # select groups to compare
   message("select index (left) of first group to compare : ")
@@ -41,6 +46,12 @@ NULL
     results <- DEsingle(counts = tmp.expression.table, group = as.factor(tmp.new.condition))
   }
   results.classified <- DEtype(results = results, threshold = FDR)
+  if (SimpleResult == TRUE) {
+    gene.name <- rownames(results.classified)
+    results.classified <- cbind(log(results.classified$foldChange),results.classified$pvalue,results.classified$pvalue.adj.FDR )
+    colnames(results.classified) <- c("LFC","pval","pval-adj")
+    rownames(results.classified) <- gene.name
+  }
   if(grepl("BRIC", label.used, ignore.case = T)){
     object@BiCluster@MarkerGene <- results.classified
   } else {

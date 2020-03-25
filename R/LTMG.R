@@ -286,7 +286,7 @@ LTMG<-function(VEC,Zcut_G,k=5){
       rrr_LTMG<-rrr
       for (K in 2:(k-1)) {
         tryCatch({
-          mixmdl<-normalmixEM(y[y>Zcut],K)
+          mixmdl<-invisible(normalmixEM(y[y>Zcut],K))
           rrr<-cbind(mixmdl$lambda,mixmdl$mu,mixmdl$sigma)
           TEMP<-BIC_ZIMG(y,rrr,Zcut)
           if(TEMP<MARK){

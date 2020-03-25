@@ -91,6 +91,7 @@ MCL <-function(Raw,blocks){   # Raw is the original expression matrix
       label <-df_cell_label$cluster
     }
   }
+  else{stop("cannot find cluster because of limited block being found, if user wants to get cell type, try the quick mode.")}
   return(label)
 }
 
