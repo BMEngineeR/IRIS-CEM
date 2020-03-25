@@ -8,7 +8,7 @@ NULL
                       ont="ALL",keyType = "SYMBOL",pAdjustMethod = "BH",
                       pvalueCutoff  = 0.01,
                       qvalueCutoff  = 0.05)))
-  } else if(grepl("mouse", species, ignore.case = T)){
+  } else if(grepl("human", species, ignore.case = T)){
     pathway<- invisible(suppressMessages(enrichGO(gene=genes.use,OrgDb = org.Hs.eg.db,
                       ont="ALL",keyType = "SYMBOL",pAdjustMethod = "BH",
                       pvalueCutoff  = 0.01,

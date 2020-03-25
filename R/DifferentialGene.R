@@ -49,8 +49,9 @@ NULL
   if (SimpleResult == TRUE) {
     gene.name <- rownames(results.classified)
     results.classified <- cbind(log(results.classified$foldChange),results.classified$pvalue,results.classified$pvalue.adj.FDR )
-    colnames(results.classified) <- c("LFC","pval","pval-adj")
+    colnames(results.classified) <- c("LFC","pval","pvalue.adj.FDR")
     rownames(results.classified) <- gene.name
+    results.classified <- as.data.frame(results.classified)
   }
   if(grepl("BRIC", label.used, ignore.case = T)){
     object@BiCluster@MarkerGene <- results.classified

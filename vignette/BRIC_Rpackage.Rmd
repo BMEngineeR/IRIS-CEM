@@ -22,14 +22,14 @@ knitr::opts_chunk$set(echo = TRUE)
 # Intorduction to BRIC
 
 ## General introduction 
-BRIC integrates in-house and state-of-the-art computational tools and provides two analysis strategies, including LTMG (left-truncated mixture Gaussian model)-embedded scRNA-Seq analysis and co-expression gene analysis.
+BRIC integrates in-house and state-of-the-art computational tools and provides two analysis strategies, including bicluster-based co-expression gene analysis [(Xie, et al., 2020)](https://academic.oup.com/bioinformatics/article-abstract/36/4/1143/5567116?redirectedFrom=fulltext) and LTMG (left-truncated mixture Gaussian model)-embedded scRNA-Seq analysis [(Wan, et al., 2019)](https://academic.oup.com/nar/article/47/18/e111/5542876).
 
 ## Main function
 
 The main idea of BRIC consists of two major strategies: 
 
-* (i) LTMG-based scRNA-seq analysis
-* (ii) co-expression gene module analysis.
+* (i)  bicluster-based co-expression gene module analysis.
+* (ii) quick mode (cluster) scRNA-Seq analysis
 
 ## Obejct structure 
 The computational frame is constructed under the S4 data structure in R. The structure of `BRIC object` is: 
@@ -60,6 +60,7 @@ The computational frame is constructed under the S4 data structure in R. The str
 # Requirements
 ## Environment
 
+We recommend user to install BRIC on large memory (32GB) based linux operation system if user aims at analyzing bicluster-based co-expression analysis; if user aims at analyzing data by quick mode, we recommend to install BRIC on small memeory (8GB) based Windows or linux operation system; BRIC does not support MAC. 
 We will assum you have the following installed:
 
 * R (equal or greater than 3.5)
@@ -67,8 +68,8 @@ We will assum you have the following installed:
 Pre-install packge
 ```{r pre_install, eval=FALSE, echo=TRUE}
 install.packages(c('BiocManager','devtools', 'AdaptGauss', "pheatmap", 'mixtools','MCL', 'anocva', 
-                   'qgraph','multtest','Rtools','ggpubr'))
-BiocManager::install(c('org.Mm.eg.db', 'org.Hs.eg.db','clusterProfiler','DEsingle',
+                   'qgraph','Rtools','ggpubr'))
+BiocManager::install(c('org.Mm.eg.db','multtest', 'org.Hs.eg.db','clusterProfiler','DEsingle',
                        'DrImpute', 'scater', 'scran'))
 devtools::install_github(repo = 'satijalab/seurat')
 ```
@@ -76,9 +77,10 @@ devtools::install_github(repo = 'satijalab/seurat')
 
 1. The input to BRIC is the single-cell RNA-seq expression matrix:
 
-* Rows correspond to genes and columns correspond to cells.
-* Expression units: the preferred expression values are RPKM/FPKM/CPM. 
-* The data file should be tab delimited.
++ Rows correspond to genes and columns correspond to cells.
++ Expression units: the preferred expression values are RPKM/FPKM/CPM. 
++ The data file should be tab delimited.
+
 2. BRIC also accept output files from 10X CellRanger, includinhg a folder which contains three individual files and h5 file. 
 
 ## Others
@@ -87,7 +89,7 @@ When you perform co-expression analysis, it will output several intermediate fil
 
 # Installation
 
-For installation, simply type the following command in your R console:
+For installation, simply type the following command in your R console, please select option 3 when R asks user to update packages:
 ```{r install, eval=FALSE, echo=TRUE}
 devtools::install_github("BMEngineeR/BRIC", ref ="Beta",force = T)
 ```
@@ -116,13 +118,13 @@ setwd("d:/my_analysis/BRIC_TEST/2.Yan/")
 2. Read from .h5 file.
 
 ```{r h5_files, eval= FALSE, echo=TRUE}
-InputMatrix <- BRIC::ReadFrom10X_h5("../inst/extdata/10X_5K/5k_pbmc_protein_v3_filtered_feature_bc_matrix.h5")
+InputMatrix <- BRIC::ReadFrom10X_h5("C:/Users/cyz/Documents/BRIC/BRIC/inst/extdata/10X_5K/5k_pbmc_protein_v3_filtered_feature_bc_matrix.h5")
 ```
 
 3. Read from 10X folder.
 
 ```{r folder, eval= FALSE, echo=TRUE}
-InputMatrix <- BRIC::ReadFrom10X_folder("../inst/extdata/10X_3K/folder_10X/")
+InputMatrix <- BRIC::ReadFrom10X_folder("C:/Users/cyz/Documents/BRIC/BRIC/inst/extdata/10X_3K/folder_10X/")
 ```
 4. Read from .csv or .txt file
 
@@ -159,7 +161,7 @@ object <- BRIC::SubsetData(object , nFeature.upper=15000,nFeature.lower=8000,
 
 ## Preprocesing 
 
-This step is optional. User can choose perform normalization or imputation based on their need (default is closed both two methods). The normalization method is from package scran and can be opened by using parameter `normalization = 'LibrarySizeNormalization'`. The imputation method is from package DrImpute and can be opened by using parameter `IsImputation = TRUE`.
+User can choose perform normalization or imputation based on their need. The normalization method has two options, one is the simplist CPM normalization (default `normalization = 'LibrarySizeNormalization'`). The other is from package scran and can be opened by using parameter `normalization = 'scran'`, . The imputation method is from package DrImpute and can be opened by using parameter `IsImputation = TRUE` (default as closed).
 ```{r ProcessData, eval= TRUE, echo=TRUE}
 object <- BRIC::ProcessData(object, normalization = "LibrarySizeNormalization", IsImputation = FALSE, seed = 123)
 ```
@@ -202,7 +204,7 @@ THis function need user to input gorup that want to plot on the figure. Input `4
 
 BRCI can provide biclustering function, which is based on our in-house novel algorithm, QUBIC2 (<https://github.com/maqin2001/qubic2>). Here we will show the basic biclustering usage of BRIC using a $200\times 88$ expression matrix generated from previous top 2000 variant genes. However, we recommend user should use `Gene_use = all` to generate LTMG matrix. 
 
-## LTMG-discretized bicluster (recommand for single cell RNA-seq data)
+## LTMG-discretized bicluster (recommend for single cell RNA-seq data)
 You can type the following command to run discretization (LTMG) + biclustering directly:
 ```{r biclustering_basedLTMG,eval= FALSE,echo = TRUE}
 object <- BRIC::RunLTMG(object, Gene_use = 200, seed = 123)
@@ -212,7 +214,7 @@ object <- BRIC::RunBicluster(object, DiscretizationModel = "LTMG",OpenDual = TRU
 
 ```
 
-## Quantile-discretized bicluster (recommand for bulk RNA-Seq or microarray data)
+## Quantile-discretized bicluster (recommend for bulk RNA-Seq or microarray data)
 
 This will output several files, and among them you will find one named  `Yan_sub.txt.chars.blocks`,which contains the predicted biclusters.
 Or, user may use first version discretization strategy provided by QUBIC 1.0.
@@ -270,7 +272,7 @@ object <- RunPathway(object ,module.number = 1, selected.gene.cutoff = 0.05,
 ```
 
 
-
+# sessioninfo
 ```{r}
 sessionInfo()
 ```
