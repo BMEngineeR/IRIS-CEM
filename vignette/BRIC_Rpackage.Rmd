@@ -193,9 +193,9 @@ object <- BRIC::RunClassification(object,  k.param = 20, resolution = 0.5, algor
 ## Plot dimension reduction plot
 ```{r run_plotDim, eval= FALSE, echo=TRUE}
 # demo only run top 500 gene for saving time.
-PlotDimension(object,reduction = "umap")
+BRIC::PlotDimension(object,reduction = "umap")
 ```
-THis function need user to input gorup that want to plot on the figure. Input `4` means choose the Seurat0.5 group as cell label to plot.
+This function need user to input group that is used to plot on the figure. Input `4` means choose the Seurat0.5 group as cell label to plot.
 ![dim](D:/my_analysis\\BRIC_TEST\\figures\\LTMG\\dimension_selection.png)
 ![cluster](D:/my_analysis\\BRIC_TEST\\figures\\LTMG\\dimension_plot.png)
 
@@ -207,9 +207,9 @@ BRCI can provide biclustering function, which is based on our in-house novel alg
 ## LTMG-discretized bicluster (recommend for single cell RNA-seq data)
 You can type the following command to run discretization (LTMG) + biclustering directly:
 ```{r biclustering_basedLTMG,eval= FALSE,echo = TRUE}
-object <- BRIC::RunLTMG(object, Gene_use = 200, seed = 123)
+object <- BRIC::RunLTMG(object, Gene_use = "all", seed = 123)
 object <- BRIC::CalBinaryMultiSignal(object)
-object <- BRIC::RunBicluster(object, DiscretizationModel = "LTMG",OpenDual = TRUE, Extension = 0.90,
+object <- BRIC::RunBicluster(object, DiscretizationModel = "LTMG",OpenDual = TRUE,
                           NumBlockOutput = 100, BlockOverlap = 0.7, BlockCellMin = 15)
 
 ```
@@ -231,13 +231,12 @@ The cell type prediction of BRIC is based on the biclustering results. In short,
 
 
 ```{r cell_type,eval=FALSE}
-
 object <- BRIC::FindClassBasedOnMC(object)
 ```
 ## Visualize block and network.
 
 ```{r visualize_block, eval = FALSE, echo =TRUE }
-BRIC::PlotHeatmap(object)
+BRIC::PlotHeatmap(object ,N.block =2)
 ```
 ![blockheatmap](D:/my_analysis\\BRIC_TEST\\figures\\bicluster\\blockheatmap.png)
 
@@ -249,7 +248,7 @@ BRIC::PlotNetwork(object, Bic.index = 1, method = "pearson")
 # 5. Biological interpretation. 
 ## Cell-type-specific marker genes
 ```{r CTS_marker_gene, eval = FALSE, echo =TRUE}
-object <- FindMarkers(object)
+object <- BRIC::FindMarkers(object)
 ```
 User need to select cell type to compare, while here we select `4:Suerat0.5` as cell type category to analyze.
 ![markergene](D:/my_analysis\\BRIC_TEST\\figures\\LTMG\\markergebe_selection.png)
@@ -265,9 +264,9 @@ After running the `Findmarker`, user can find table in `object@LTMG@MarkerGene` 
 ## Cell-type-specific pathways.
 The first pathway analysis is based on quick mode by specifying `genes.source = "CTS"`, which means cell-type-specific marker genes; the second pathway analysis is based on genes from bicluster block. 
 ```{r CTS_pathways, eval = FALSE, echo =TRUE}
-object <- RunPathway(object, selected.gene.cutoff = 0.05,
-                        species = "Human", database = "GO", genes.source = "LTMG")
-object <- RunPathway(object ,module.number = 1, selected.gene.cutoff = 0.05,
+object <- BRIC::RunPathway(object, selected.gene.cutoff = 0.05,
+                        species = "Human", database = "GO", genes.source = "CTS")
+object <- BRIC::RunPathway(object ,module.number = 1, selected.gene.cutoff = 0.05,
                         species = "Human", database = "GO", genes.source = "Bicluster")
 ```
 

@@ -29,7 +29,7 @@ NULL
 #' @return
 #' @name PlotNetwork
 #' @examples
-.qunetwork <-  function(object = NULL, Bic.index = 1, method = c("pearson", "kendall", "spearman"), is.plot = TRUE) {
+.qunetwork <- function(object = NULL, Bic.index = 1, method = c("pearson", "kendall", "spearman"), is.plot = TRUE) {
 
   x <- object@Processed_count
   number = 1: length(unique(object@BiCluster@CoCond_cell$Condition))

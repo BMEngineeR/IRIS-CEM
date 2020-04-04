@@ -46,8 +46,8 @@ NULL
 .runPathway <- function(object = NULL,module.number = NULL, selected.gene.cutoff = 0.05,
                         species = "Human", database = "GO", genes.source = "CTS"){
   if (genes.source == "CTS"){
-    tmp.table<- object@LTMG@MarkerGene
-    genes.use.LTMG <- rownames(tmp.table)[tmp.table$pvalue.adj.FDR < selected.gene.cutoff]
+    tmp.table<- as.data.frame(object@LTMG@MarkerGene)
+    genes.use.LTMG <- rownames(tmp.table)[tmp.table$`pval-adj` < selected.gene.cutoff]
     if(database == "GO"){
       pathway <- .RunGO(genes.use = genes.use.LTMG , species = species)
     }else if(database == "KEGG"){
@@ -61,10 +61,9 @@ NULL
     genes.use.module <- object@BiCluster@CoReg_gene$cell_name[object@BiCluster@CoReg_gene$Condition == block.number]
     # run on Bicluster marker gene
       if(is.null(object@BiCluster@MarkerGene)){message("There is no gene in MarkerGene slot.
-                                                     \n ignore pathway analysis based on marker gene derived from MC defined cell type. ")
+                                                     \n Ignore pathway analysis based on marker gene derived from MC defined cell type. ")
         genes.use.MC <- NULL
-      }
-      else{
+      } else{
         tmp.table<- object@BiCluster@MarkerGene
         genes.use.MC <- rownames(tmp.table)[tmp.table$pvalue.adj.FDR < selected.gene.cutoff]
       }
@@ -75,9 +74,10 @@ NULL
       pathway <- lapply(gene.list, function(x) .RunKEGG(genes.use = x , species = species))
     }
     object@BiCluster@PathwayFromModule <- pathway$genes.use.module@result
-    object@BiCluster@PathwayFromMC <- pathway$genes.use.MC@result
+    if(is.null(genes.use.MC)){
+      message("not find MC based marker genes, ignore pathway enrichment.......")
+    } else{ object@BiCluster@PathwayFromMC <- pathway$genes.use.MC@result}
   }
-
 
 return(object)
 

@@ -62,15 +62,19 @@ setMethod("RunDiscretization", "BRIC", .runDiscretization)
 #' RunBicusterBaseOnLTMG
 #'
 #' @param object
-#' @param OpenDual
-#' @param Extention
-#' @param NumBlockOutput
-#' @param BlockOverlap
-#' @param BlockCellMin
+#' @param OpenDual the parameter using the Dual strategy to extend bicluster block, default: FALSE.
+
+#' @param Extention consistency level of the block (0.5-1.0],
+#' the minimum ratio between the number of identical valid symbols in a column and the total
+#' number of rows in the output, default: 1.0
+
+#' @param NumBlockOutput  number of blocks to report, default: 100
+#' @param BlockOverlap filtering overlapping blocks, default: 0.9 (do not remove any blocks)
+#' @param BlockCellMin minimum column width of the block, default: 5% of columns, minimum 2 columns
 #'
 #' @examples
-.runBiclusterBaseOnLTMG <- function(object = NULL, OpenDual = TRUE, Extension = 1,
-                                    NumBlockOutput = 100, BlockOverlap = 1, BlockCellMin = 15) {
+.runBiclusterBaseOnLTMG <- function(object = NULL, OpenDual = FALSE, Extension = 1,
+                                    NumBlockOutput = 100, BlockOverlap = 0.9, BlockCellMin = 15) {
   print("writing LTMG Discretization file ...")
   tmp.dir <- paste0(getwd(),"/tmp_expression.txt.chars")
   tmp.multi <- object@LTMG@LTMG_BinaryMultisignal
