@@ -39,7 +39,6 @@ NULL
 #' @param object
 #' @param q
 #'
-
 .runDiscretization <- function(object = NULL, q = 0.06, LogTransformation = FALSE){
   message("writing temporary expression file ...")
   tmp.dir <- paste0(getwd(),"/tmp_expression.txt")
