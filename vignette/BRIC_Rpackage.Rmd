@@ -90,7 +90,7 @@ When you perform co-expression analysis, it will output several intermediate fil
 # Installation
 
 For installation, simply type the following command in your R console, please select option 3 when R asks user to update packages:
-```{r install, eval=FALSE, echo=TRUE}
+```{r install, eval=FALSE, echo=FALSE}
 devtools::install_github("BMEngineeR/BRIC", ref ="Beta",force = T)
 ```
 
