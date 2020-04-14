@@ -70,7 +70,7 @@ setMethod("RunDiscretization", "BRIC", .runDiscretization)
 
 #' @param NumBlockOutput  number of blocks to report, default: 100
 #' @param BlockOverlap filtering overlapping blocks, default: 0.9 (do not remove any blocks)
-#' @param BlockCellMin minimum column width of the block, default: 5% of columns, minimum 2 columns
+#' @param BlockCellMin minimum column width of the block, default: 5\% of columns, minimum 2 columns
 #'
 #' @examples
 .runBiclusterBaseOnLTMG <- function(object = NULL, OpenDual = FALSE, Extension = 1,
