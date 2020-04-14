@@ -64,7 +64,7 @@ setMethod("RunDimensionReduction", "BRIC", .runDimensionReduction)
 #' @export
 setMethod("RunClassification", "BRIC", .runClassification)
 
-# .visualzeDim <- function(object, reduction = "tsne", )
+
 
 
 .plotDimension <- function(object, reduction = "tsne", pt_size = 0.5){

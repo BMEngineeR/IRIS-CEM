@@ -148,13 +148,13 @@ object <- BRIC::AddMeta(object, meta.info = NULL)
 ```
 
 3. plotmeta: plot meta information based on RNA count and Feature number. This step is for the following subset step in terms of filtering out low quality data.    
-```{r plot_metadata, eval= TRUE, echo=TRUE}
+```{r plot_metadata,echo=FALSE, eval= TRUE, echo=TRUE}
 BRIC::PlotMeta(object)
 ```
 
 
 4. remove low quality data based on the previous plot.
-```{r subset_data, eval= TRUE, echo=TRUE}
+```{r subset_data, echo=FALSE,eval= TRUE, echo=TRUE}
 object <- BRIC::SubsetData(object , nFeature.upper=15000,nFeature.lower=8000,
                          Counts.upper=700000,Counts.lower=400000)
 ```
@@ -162,7 +162,7 @@ object <- BRIC::SubsetData(object , nFeature.upper=15000,nFeature.lower=8000,
 ## Preprocesing 
 
 User can choose perform normalization or imputation based on their need. The normalization method has two options, one is the simplist CPM normalization (default `normalization = 'LibrarySizeNormalization'`). The other is from package scran and can be opened by using parameter `normalization = 'scran'`, . The imputation method is from package DrImpute and can be opened by using parameter `IsImputation = TRUE` (default as closed).
-```{r ProcessData, eval= TRUE, echo=TRUE}
+```{r ProcessData,echo=FALSE, eval= TRUE, echo=TRUE}
 object <- BRIC::ProcessData(object, normalization = "LibrarySizeNormalization", IsImputation = FALSE, seed = 123)
 ```
 
@@ -170,9 +170,9 @@ object <- BRIC::ProcessData(object, normalization = "LibrarySizeNormalization", 
 # 2. Run LTMG
 
 The argument `Gene_use = 2000` is  top 2000 variant genes which are selected to run LTMG. For LTMG strategy, we recommend to use top 2000 gene. On the contrary, for co-expression gene analysis, we recommend to use all gene by changing `Gene_use = "all"`. 
-```{r run_LTMG, eval= FALSE, echo=TRUE}
+```{r run_LTMG, echo=FALSE,eval= FALSE, echo=TRUE}
 # demo only run top 500 gene for saving time.
-object <- BRIC::RunLTMG(object, Gene_use = 2000, seed = 123)
+object <- BRIC::RunLTMG(object, Gene_use = 500, seed = 123)
 ```
 
 # 3. Quick mode.
