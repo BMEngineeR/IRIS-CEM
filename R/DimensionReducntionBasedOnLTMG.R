@@ -8,22 +8,23 @@ NULL
 #' @param dims
 #' @name RundimensionReduction
 #' @importFrom Seurat CreateSeuratObject ScaleData RunPCA RunTSNE RunUMAP
-.runDimensionReduction <- function(object, reduction = "tsne", dims = 1:15){
-  tmp.seurat <- CreateSeuratObject(object@LTMG@LTMG_discrete)
-  tmp.seurat<- ScaleData(tmp.seurat)
-  tmp.seurat <- suppressMessages(RunPCA(tmp.seurat, features = rownames(tmp.seurat@assays$RNA)))
-  object@LTMG@DimReduce@PCA <- tmp.seurat@reductions$pca@cell.embeddings
+.runDimensionReduction <- function(object, reduction = "tsne", dims = 1:15 ,perplexity = 15, seed = 1){
+  Tmp.seurat <- CreateSeuratObject(object@LTMG@LTMG_discrete)
+  Tmp.seurat<- ScaleData(Tmp.seurat)
+  Tmp.seurat <- suppressMessages(RunPCA(Tmp.seurat, features = rownames(Tmp.seurat@assays$RNA)))
+  object@LTMG@DimReduce@PCA <- Tmp.seurat@reductions$pca@cell.embeddings
   if(grepl("tsne", reduction, ignore.case = T) || grepl("umap", reduction, ignore.case = T)){
     if(grepl("tsne", reduction, ignore.case = T)){
-      tmp.seurat <- RunTSNE(tmp.seurat,dims=dims)
-      object@LTMG@DimReduce@TSNE <- tmp.seurat@reductions$tsne@cell.embeddings
+      Tmp.seurat <- RunTSNE(Tmp.seurat,dims=dims , seed.use = seed,
+                            perplexity = perplexity)
+      object@LTMG@DimReduce@TSNE <- Tmp.seurat@reductions$tsne@cell.embeddings
     }
     if(grepl("umap", reduction, ignore.case = T)){
-      tmp.seurat <- suppressMessages(RunUMAP(tmp.seurat,dims = dims))
-      object@LTMG@DimReduce@UMAP <- tmp.seurat@reductions$umap@cell.embeddings
+      Tmp.seurat <- suppressMessages(RunUMAP(Tmp.seurat,dims = dims))
+      object@LTMG@DimReduce@UMAP <- Tmp.seurat@reductions$umap@cell.embeddings
     }
   } else {stop("choose a dimension reduction method between umap or tsne")}
-object@LTMG@tmp.seurat<-tmp.seurat
+object@LTMG@Tmp.seurat<-Tmp.seurat
 return(object)
 }
 
@@ -43,18 +44,19 @@ setMethod("RunDimensionReduction", "BRIC", .runDimensionReduction)
 #' @importFrom Seurat FindNeighbors FindClusters
 #' @import ggplot2
 .runClassification <- function(object,dims = 1:15, k.param = 20, resolution = 0.6, algorithm = 1 ){
-  if ( is.null(object@LTMG@tmp.seurat)) {stop("There is no temporary seurat obejct getting detected. \n Try to run RundimensionRuduction first.")}
-  tmp.seurat <- object@LTMG@tmp.seurat
-  tmp.seurat <- FindNeighbors(tmp.seurat,dims=dims)
-  tmp.seurat <- FindClusters(tmp.seurat, resolution = resolution, algorithm = algorithm)
+  if ( is.null(object@LTMG@Tmp.seurat)) {stop("There is no temporary seurat obejct getting detected. \n Try to run RundimensionRuduction first.")}
+  Tmp.seurat <- object@LTMG@Tmp.seurat
+  Tmp.seurat <- FindNeighbors(Tmp.seurat,dims=dims, k.param = k.param)
+  # Seurat::ElbowPlot(Tmp.seurat, ndims = length(dims)+5)
+  Tmp.seurat <- FindClusters(Tmp.seurat, resolution = resolution, algorithm = algorithm)
   tmp.meta <- object@MetaInfo
   tmp.colname <- colnames(tmp.meta)
-  res.index <- grep(paste0("res.",resolution),colnames(tmp.seurat@meta.data))
+  res.index <- grep(paste0("res.",resolution),colnames(Tmp.seurat@meta.data))
   tmp.colname <- c(tmp.colname,paste0("Seurat",resolution) )
-  tmp.meta <- cbind(tmp.meta, tmp.seurat@meta.data[,res.index])
+  tmp.meta <- cbind(tmp.meta, Tmp.seurat@meta.data[,res.index])
   colnames(tmp.meta) <- tmp.colname
   object@MetaInfo <- tmp.meta
-  object@LTMG@tmp.seurat <- tmp.seurat
+  object@LTMG@Tmp.seurat <- Tmp.seurat
   return(object)
 }
 
@@ -62,7 +64,7 @@ setMethod("RunDimensionReduction", "BRIC", .runDimensionReduction)
 #' @export
 setMethod("RunClassification", "BRIC", .runClassification)
 
-# .visualzeDim <- function(object, reduction = "tsne", )
+
 
 
 .plotDimension <- function(object, reduction = "tsne", pt_size = 0.5){

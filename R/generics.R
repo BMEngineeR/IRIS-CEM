@@ -1,9 +1,20 @@
-#' @rdname NormalizeData
+#' @rdname ProcessData
 #' @export
-setGeneric(name="NormalizeData",
-           def=function(object, ...) standardGeneric("NormalizeData")
+setGeneric(name="ProcessData",
+           def=function(object, ...) standardGeneric("ProcessData")
 )
 
+#' @rdname ReadFrom10X_folder
+#' @export
+setGeneric(name="ReadFrom10X_folder",
+           def=function(object, ...) standardGeneric("ReadFrom10X_folder")
+)
+
+#' @rdname ReadFrom10X_h5
+#' @export
+setGeneric(name="ReadFrom10X_h5",
+           def=function(object, ...) standardGeneric("ReadFrom10X_h5")
+)
 
 #' @export
 #' @rdname AddMeta
@@ -109,4 +120,14 @@ setGeneric(name = "FindClassBasedOnMC",
 #' @rdname PlotNetwork
 setGeneric(name = "PlotNetwork",
            def =function(object, ...) standardGeneric("PlotNetwork"))
+
+#' @export
+#' @rdname PlotMeta
+setGeneric(name = "PlotMeta",
+           def =function(object, ...) standardGeneric("PlotMeta"))
+
+#' @export
+#' @rdname SubsetData
+setGeneric(name = "SubsetData",
+           def =function(object, ...) standardGeneric("SubsetData"))
 

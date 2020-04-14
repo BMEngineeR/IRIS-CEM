@@ -2,9 +2,14 @@
 #' @include Classes.R
 NULL
 
+#' @param object BRIC object
+#'
+#' @param SimpleResult marker gene only output log fold change (LFC), p-value, and adjusted p-value.
+#' @param FDR a number to specify the threshold of FDR, default by 0.05
+#'
 #' @importFrom DEsingle DEsingle DEtype
 #'
-.findMarkers <- function(object, FDR = 0.05){
+.findMarkers <- function(object,SimpleResult = T, FDR = 0.05){
   # two group number as factor.
   message("select condition to compare")
   message(paste0(c(1:ncol(object@MetaInfo))," : ",c(colnames(object@MetaInfo)),"\n"))
@@ -12,8 +17,9 @@ NULL
   ident.index <- as.numeric(ident.index)
   tmp.ident <- object@MetaInfo[,ident.index]
   names(tmp.ident) <- rownames(object@MetaInfo)
+  label.used <- colnames(object@MetaInfo)[ident.index]
   # create index table
-  tmp.group.table <- data.frame(index = 1:unique(tmp.ident), condition = as.character(sort(unique(tmp.ident))),stringsAsFactors = F)
+  tmp.group.table <- data.frame(index = 1:length(unique(tmp.ident)), condition = as.character(sort(unique(tmp.ident))),stringsAsFactors = F)
   tmp.group.table <- rbind(tmp.group.table, c(nrow(tmp.group.table)+1,"rest of all"))
   # select groups to compare
   message("select index (left) of first group to compare : ")
@@ -31,8 +37,6 @@ NULL
     new.condition[tmp.ident == group.1] <- group.1
     new.condition[tmp.ident != group.1] <- "all"
     results <- DEsingle(counts = tmp.expression.table, group = as.factor(new.condition))
-    results.classified <- DEtype(results = results, threshold = FDR)
-    object@LTMG@MarkerGene <- results.classified
   } else {
     new.condition <- vector(mode = "logical", length = length(tmp.ident))
     new.condition[tmp.ident == group.1] <- "TRUE"
@@ -40,9 +44,21 @@ NULL
     tmp.new.condition <- as.factor(as.character(tmp.ident)[new.condition == "TRUE"])
     tmp.expression.table <- tmp.expression.table[,new.condition == "TRUE"]
     results <- DEsingle(counts = tmp.expression.table, group = as.factor(tmp.new.condition))
-    results.classified <- DEtype(results = results, threshold = FDR)
+  }
+  results.classified <- DEtype(results = results, threshold = FDR)
+  if (SimpleResult == TRUE) {
+    gene.name <- rownames(results.classified)
+    results.classified <- cbind(log(results.classified$foldChange),results.classified$pvalue,results.classified$pvalue.adj.FDR )
+    colnames(results.classified) <- c("LFC","pval","pvalue.adj.FDR")
+    rownames(results.classified) <- gene.name
+    results.classified <- as.data.frame(results.classified)
+  }
+  if(grepl("BRIC", label.used, ignore.case = T)){
+    object@BiCluster@MarkerGene <- results.classified
+  } else {
     object@LTMG@MarkerGene <- results.classified
   }
+
   return(object)
 }
 

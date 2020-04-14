@@ -91,6 +91,7 @@ MCL <-function(Raw,blocks){   # Raw is the original expression matrix
       label <-df_cell_label$cluster
     }
   }
+  else{stop("cannot find cluster because of limited block being found, if user wants to get cell type, try the quick mode.")}
   return(label)
 }
 
@@ -140,7 +141,14 @@ CLUSTERING <- function(Raw,blocks,method='MCL',K=NULL){
   # chars file
   input <- paste0(getwd(),"/tmp_expression.txt.chars")
   tmp.label<-CLUSTERING(input, paste0(input,'.blocks'), method, K = K)    # not sure how to deal with that K
-  object@MetaInfo <- cbind(object@MetaInfo, BRIC_Label = tmp.label)
+  if (any(grepl("BRIC", colnames(object@MetaInfo), ignore.case = T))){
+    number.bric.label <- length(grep("BRIC",  colnames(object@MetaInfo)))
+    bric.label.orginal.name <- colnames(object@MetaInfo)[grep("BRIC",  colnames(object@MetaInfo))]
+    object@MetaInfo <- cbind(object@MetaInfo, BRIC_Label = tmp.label)
+    colnames(object@MetaInfo)[grep("BRIC",  colnames(object@MetaInfo))] <- c(bric.label.orginal.name,paste0("BRIC_Label_",number.bric.label +1))
+  } else {
+    object@MetaInfo <- cbind(object@MetaInfo, BRIC_Label = tmp.label)
+  }
   return(object)
 }
 #' @rdname FindClassBasedOnMC

@@ -1,10 +1,12 @@
 #' @include generics.R
 #' @include Classes.R
 NULL
-#' @param object
+
+#' plot heatmap based on bicluster
 #'
-#' @param N.block
-#'
+#' @param object BRIC object
+#' @param N.block number of blocks
+#' @name PlotHeatmap
 #' @import pheatmap
 .plotHeatmap <- function(object = object, N.block = 2){
   condition.index <- 1:N.block
@@ -19,7 +21,7 @@ NULL
   cell.duplicate.name <- cell.sub$cell_name[duplicated(cell.sub$cell_name)]
   unique.gene.name <- gene.sub.rmdup$cell_name
   unique.cell.name <- cell.sub.rmdup$cell_name
-  heatmap.matrix <- object@raw_count[unique.gene.name,unique.cell.name]
+  heatmap.matrix <- object@Processed_count[unique.gene.name,unique.cell.name]
   annotation <- data.frame(row.names = cell.sub.rmdup$cell_name, Condition = cell.sub.rmdup$Condition)
   annotation[cell.duplicate.name,] <- "overlap"
   annotation$temp <- rep(1,nrow(annotation))

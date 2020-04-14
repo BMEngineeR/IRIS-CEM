@@ -5,7 +5,7 @@ NULL
 #' @param object
 #' @importFrom qgraph qgraph
 .separateBic <- function(object = NULL){
-  tmp.expression <- object@raw_count
+  tmp.expression <- object@Processed_count
   bic.number<-length(unique(object@BiCluster@CoCond_cell$Condition))
   Bic <- c()
   Bic.name <-c()
@@ -27,11 +27,11 @@ NULL
 #' @param method
 #'
 #' @return
-#' @rdname PlotNetwork
+#' @name PlotNetwork
 #' @examples
-.qunetwork <-  function(object = NULL, Bic.index = 1, method = c("pearson", "kendall", "spearman"), is.plot = TRUE) {
+.qunetwork <- function(object = NULL, Bic.index = 1, method = c("pearson", "kendall", "spearman"), is.plot = TRUE) {
 
-  x <- object@raw_count
+  x <- object@Processed_count
   number = 1: length(unique(object@BiCluster@CoCond_cell$Condition))
   groups = c(number[[Bic.index = Bic.index]])
   if (length(number) < 1)
