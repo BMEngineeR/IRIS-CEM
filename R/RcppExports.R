@@ -3,6 +3,6 @@
 
 #' @backref src/rcpp_bric.cpp
 .main <- function(str) {
-    .Call('_IRISCEM_qubic', PACKAGE = 'IRISCEM', str)
+    .Call('_BRIC_qubic', PACKAGE = 'BRIC', str)
 }
 
