@@ -1,4 +1,4 @@
-Package: BRIC
+Package: IRISCEM
 Type: Package
 Title: BRIC for Comprehensive analysis based on single-cell RNA-Seq
 Version: 1.0
@@ -9,7 +9,7 @@ Description: One paragraph description of what the package does as one or more f
 License: MIT
 Imports: Rcpp (>= 1.0.0), MCL, anocva, igraph
 LinkingTo: Rcpp
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Collate: 
     'Classes.R'
     'generics.R'

@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 // qubic
 int qubic(const CharacterVector& str);
-RcppExport SEXP _BRIC_qubic(SEXP strSEXP) {
+RcppExport SEXP _IRISCEM_qubic(SEXP strSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -18,11 +18,11 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_BRIC_qubic", (DL_FUNC) &_BRIC_qubic, 1},
+    {"_IRISCEM_qubic", (DL_FUNC) &_IRISCEM_qubic, 1},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_BRIC(DllInfo *dll) {
+RcppExport void R_init_IRISCEM(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }

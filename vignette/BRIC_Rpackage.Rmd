@@ -3,7 +3,7 @@ title: "BRIC vignette"
 subtitle: BRIC 
 abstract: BRIC integrates in-house and state-of-the-art computational tools and provides two analysis strategies, including LTMG (left-truncated mixture Gaussian model)-embedded scRNA-Seq analy-sis and co-expression gene analysis.
 author: Yuzhou Chang
-date: "26 February, 2020"
+date: "14 April, 2020"
 output:
   BiocStyle::html_document:
     number_sections: no
@@ -138,7 +138,7 @@ InputMatrix <- read.table("d:/my_analysis/BRIC_TEST/2.Yan/Yan_expression.txt",he
 
 1. Create BRIC object.
 
-```{r create_object, eval= TRUE, echo=TRUE}
+```{r create_object, eval= TRUE, echo=TRUE,message=FALSE}
 object <- BRIC::CreateBRICObject(InputMatrix)
 ```
 
@@ -172,7 +172,7 @@ object <- BRIC::ProcessData(object, normalization = "LibrarySizeNormalization", 
 The argument `Gene_use = 2000` is  top 2000 variant genes which are selected to run LTMG. For LTMG strategy, we recommend to use top 2000 gene. On the contrary, for co-expression gene analysis, we recommend to use all gene by changing `Gene_use = "all"`. 
 ```{r run_LTMG, echo=FALSE,eval= FALSE, echo=TRUE}
 # demo only run top 500 gene for saving time.
-object <- BRIC::RunLTMG(object, Gene_use = 500, seed = 123)
+object <- BRIC::RunLTMG(object, Gene_use = "500", seed = 123)
 ```
 
 # 3. Quick mode.
