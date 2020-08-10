@@ -337,7 +337,7 @@ LTMG<-function(VEC,Zcut_G,k=5){
   rownames(LTMG_Res)<-gene_name
   colnames(LTMG_Res) <- colnames(MAT)
   LTMG_Res<-as.matrix(LTMG_Res)
-  object@LTMG@LTMG_discrete <- LTMG_Res
+  object@LTMG@LTMG_discrete <- LTMG_Res+1
   return(object)
 }
 

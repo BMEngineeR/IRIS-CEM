@@ -2,32 +2,43 @@
 % Please edit documentation in R/generics.R, R/PlotNetwork.R
 \name{PlotNetwork}
 \alias{PlotNetwork}
-\alias{.qunetwork}
+\alias{.plotnetwork}
 \alias{PlotNetwork,BRIC-method}
-\title{plot network based on bicluster}
+\title{Title PlotNetwork}
 \usage{
 PlotNetwork(object, ...)
 
-.qunetwork(
-  object = NULL,
-  Bic.index = 1,
-  method = c("pearson", "kendall", "spearman"),
-  is.plot = TRUE
+.plotnetwork(
+  object,
+  edge.by = "gene",
+  lay.out = "linear",
+  N.block = c(1:20),
+  ...
 )
 
 \S4method{PlotNetwork}{BRIC}(
-  object = NULL,
-  Bic.index = 1,
-  method = c("pearson", "kendall", "spearman"),
-  is.plot = TRUE
+  object,
+  edge.by = "gene",
+  lay.out = "linear",
+  N.block = c(1:20),
+  ...
 )
 }
 \arguments{
-\item{method}{}
+\item{object}{Input object}
+
+\item{...}{}
+
+\item{edge.by}{This parameter decide the edge by "cell" or by "gene". The default value is by gene.}
+
+\item{lay.out}{The type of layout to create, include linear (default), circle, kk.}
+
+\item{BRIC}{}
 }
 \value{
 
 }
 \description{
-plot network based on bicluster
+This function is for building the module- module network. Nodes mean individual module. Edges mean overlapped gene (or cell).
+The weight of line show the number of gene (or cell).
 }

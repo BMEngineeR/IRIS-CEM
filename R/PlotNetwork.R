@@ -3,7 +3,7 @@
 NULL
 
 #' @param object
-#' @importFrom qgraph qgraph
+#'
 .separateBic <- function(object = NULL){
   tmp.expression <- object@Processed_count
   bic.number<-length(unique(object@BiCluster@CoCond_cell$Condition))
@@ -20,71 +20,55 @@ NULL
   return(Bic)
 }
 
-#' plot network based on bicluster
+
+#' Title PlotNetwork
 #'
-#' @param object
-#' @param Bic.index
-#' @param method
+#' @description This function is for building the module- module network. Nodes mean individual module. Edges mean overlapped gene (or cell).
+#' The weight of line show the number of gene (or cell).
+#' @param object Input object
+#' @param edge.by This parameter decide the edge by "cell" or by "gene". The default value is by gene.
+#' @param lay.out The type of layout to create, include linear (default), circle, kk.
+#' @param ...
 #'
-#' @return
 #' @name PlotNetwork
+#' @return
+#' @importFrom igraph graph_from_adjacency_matrix
+#' @import ggraph
 #' @examples
-.qunetwork <- function(object = NULL, Bic.index = 1, method = c("pearson", "kendall", "spearman"), is.plot = TRUE) {
-
-  x <- object@Processed_count
-  number = 1: length(unique(object@BiCluster@CoCond_cell$Condition))
-  groups = c(number[[Bic.index = Bic.index]])
-  if (length(number) < 1)
-    stop("at least 1 bicluster needed.")
-  bics <- .separateBic(object = object)
-  index <- which(number %in% groups)
-
-  rownamelist <- list()
-  colnamelist <- list()
-  for (i in 1:length(bics)) {
-    rownamelist[[names(bics)[i]]] <- rownames(bics[[i]])
-    colnamelist[[names(bics)[i]]] <- colnames(bics[[i]])
+.plotnetwork <- function(object, edge.by = "gene",lay.out = "linear",N.block =c(1:20), ...){
+  Bic.list <- .separateBic(object)
+  Bic.list.select<- Bic.list[N.block]
+  ntwork.adjacency.mtx <- matrix(1:(length(N.block)*length(N.block)),nrow = length(N.block))
+  rownames(ntwork.adjacency.mtx) <- colnames(ntwork.adjacency.mtx)<- names(Bic.list.select)
+  for (i in 1:nrow(ntwork.adjacency.mtx)){
+    for (j in 1:ncol(ntwork.adjacency.mtx)){
+      tmp.block.1 <- Bic.list.select[[rownames(ntwork.adjacency.mtx)[i]]]
+      tmp.block.2 <- Bic.list.select[[colnames(ntwork.adjacency.mtx)[j]]]
+      if (edge.by == "gene"){
+        n.intersect <- length(intersect(rownames(tmp.block.1),rownames(tmp.block.2)))
+      } else if(edge.by == "cell"){
+        n.intersect <- length(intersect(colnames(tmp.block.1),colnames(tmp.block.2)))
+      } else {stop(paste("Please select 'gene' or 'cell' to edge.by parameter"))}
+      ntwork.adjacency.mtx[i,j] <- n.intersect
+    }
   }
-
-  allrownames <- Reduce(union, rownamelist)
-  allcolnames <- Reduce(union, colnamelist)
-
-  un <- x[allrownames, allcolnames]
-  rowidlist <- list()
-
-  if (length(groups) > 2)
-    stop("length(group) > 2")
-  if (length(groups) == 1) {
-    rowidlist[[names(bics)[index[[1]]]]] <-
-      match(rownamelist[[index[[1]]]],
-            rownames(un))
-  } else if (length(groups) == 2) {
-    rowidlist[[paste0(names(bics)[index[[1]]], " & ", names(bics)[index[[2]]])]] <-
-      match(intersect(rownamelist[[index[[1]]]], rownamelist[[index[[2]]]]),
-            rownames(un))
-    rowidlist[[names(bics)[index[[1]]]]] <-
-      match(setdiff(rownamelist[[index[[1]]]],
-                    rownamelist[[index[[2]]]]), rownames(un))
-    rowidlist[[names(bics)[index[[2]]]]] <-
-      match(setdiff(rownamelist[[index[[2]]]],
-                    rownamelist[[index[[1]]]]), rownames(un))
-    rowidlist[["Others"]] <-
-      match(setdiff(allrownames, union(rownamelist[[index[[1]]]],
-                                       rownamelist[[index[[2]]]])), rownames(un))
-  }
-
-  cort <- stats::cor(t(un), method = method)
-
-  if (is.plot == TRUE){
-    plot.data <- list(cort, rowidlist)
-    qgraph(plot.data[[1]], groups = plot.data[[2]], layout = "spring", minimum = 0.6, legend.cex = 0.5, color = c("red", "blue", "gold", "gray"), edge.label = FALSE)
-  } else {
-    return(list(cort, rowidlist))
-  }
-
+  edge.list <- graph_from_adjacency_matrix(adjmatrix =ntwork.adjacency.mtx ,mode = "undirected",weighted = T,diag = F)
+  label = rownames(ntwork.adjacency.mtx)
+  p<- ggraph(edge.list, layout = lay.out) +
+    geom_node_point() +
+    geom_edge_arc(aes(width = weight), alpha = 0.8) +
+    scale_edge_width(range = c(0.2, 2)) +
+    geom_node_text(aes(label = label), repel = TRUE) +
+    labs(edge_width = edge.by) +
+    theme_graph()
+  print(p)
 }
+
+#' @param BRIC
+#'
 #' @rdname PlotNetwork
 #' @export
-setMethod("PlotNetwork","BRIC", .qunetwork)
+#'
+setMethod("PlotNetwork","BRIC", .plotnetwork)
 
 

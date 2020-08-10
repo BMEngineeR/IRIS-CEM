@@ -8,9 +8,9 @@
 \usage{
 PlotHeatmap(object, ...)
 
-.plotHeatmap(object = object, N.block = 2)
+.plotHeatmap(object = object, N.block = c(1, 5))
 
-\S4method{PlotHeatmap}{BRIC}(object = object, N.block = 2)
+\S4method{PlotHeatmap}{BRIC}(object = object, N.block = c(1, 5))
 }
 \arguments{
 \item{object}{BRIC object}

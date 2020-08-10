@@ -6,12 +6,12 @@ NULL
   if(grepl("mouse", species, ignore.case = T)){
     pathway<- invisible(suppressMessages(enrichGO(gene=genes.use,OrgDb = org.Mm.eg.db,
                       ont="ALL",keyType = "SYMBOL",pAdjustMethod = "BH",
-                      pvalueCutoff  = 0.01,
+                      pvalueCutoff  = 0.05,
                       qvalueCutoff  = 0.05)))
   } else if(grepl("human", species, ignore.case = T)){
     pathway<- invisible(suppressMessages(enrichGO(gene=genes.use,OrgDb = org.Hs.eg.db,
                       ont="ALL",keyType = "SYMBOL",pAdjustMethod = "BH",
-                      pvalueCutoff  = 0.01,
+                      pvalueCutoff  = 0.05,
                       qvalueCutoff  = 0.05)))
   }
 }
@@ -21,14 +21,14 @@ NULL
     pathway<-invisible(suppressMessages(enrichKEGG(gene=genes.use,
                         organism = "mmu",
                         keyType = "kegg",pAdjustMethod = "BH",
-                        pvalueCutoff  = 0.01,
+                        pvalueCutoff  = 0.05,
                         qvalueCutoff  = 0.05)))
   }
   else if(grepl("human", species, ignore.case = T)){
     pathway<-invisible(suppressMessages(enrichKEGG(gene=genes.use,
                         organism = "hsa",
                         keyType = "kegg",pAdjustMethod = "BH",
-                        pvalueCutoff  = 0.01,
+                        pvalueCutoff  = 0.05,
                         qvalueCutoff  = 0.05)))
   }
 }
@@ -38,11 +38,12 @@ NULL
 #' @param selected.gene.cutoff
 #' @param species "Human" "Mouse"
 #' @param database "GO" "KEGG"
-#' @param genes.source
+#' @param genes.source CTS Bicluster
 #'
 #' @importFrom clusterProfiler enrichKEGG enrichGO
 #' @import org.Mm.eg.db org.Hs.eg.db
 #' @importFrom AnnotationDbi select
+#' @name RunPathway
 .runPathway <- function(object = NULL,module.number = NULL, selected.gene.cutoff = 0.05,
                         species = "Human", database = "GO", genes.source = "CTS"){
   if (genes.source == "CTS"){
@@ -55,9 +56,7 @@ NULL
     }
     object@LTMG@Pathway <- pathway@result
   } else if (genes.source == "Bicluster" ){
-    message("there is total ",length(unique(object@BiCluster@CoReg_gene$Condition))," blocks detected, \n please choose number bellow: \n",
-            paste(unique(object@BiCluster@CoReg_gene$Condition)," "))
-    block.number <- readline("type the block numebr to enrich on Pathway : ")
+    block.number <- module.number
     genes.use.module <- object@BiCluster@CoReg_gene$cell_name[object@BiCluster@CoReg_gene$Condition == block.number]
     # run on Bicluster marker gene
       if(is.null(object@BiCluster@MarkerGene)){message("There is no gene in MarkerGene slot.

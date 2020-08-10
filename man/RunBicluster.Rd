@@ -28,6 +28,9 @@ RunBicluster(object, ...)
   BlockCellMin = 15
 )
 }
+\arguments{
+\item{DiscretizationModel}{asdasdasdasdasd}
+}
 \value{
 
 }

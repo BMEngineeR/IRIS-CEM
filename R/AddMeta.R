@@ -41,8 +41,7 @@ setMethod("AddMeta", "BRIC", .addMeta)
 #' @import ggplot2
 #' @importFrom  ggpubr ggarrange
 #' @param object
-#' @param splitby
-#'
+#' @name PlotMeta
 #' @return
 #'
 #' @examples
@@ -66,6 +65,18 @@ setMethod("AddMeta", "BRIC", .addMeta)
 #' @export
 setMethod("PlotMeta", "BRIC", .plotMeta)
 
+#' Title subset data by number of count and numebr of features.
+#'
+#' @param object
+#' @param nFeature.upper select upper limit for number of feature
+#' @param nFeature.lower select lower limit for number of feature
+#' @param Counts.upper select upper limit for number of UMI counts
+#' @param Counts.lower select lower limit for number of UMI counts
+#' @name SubsetData
+#' @return
+#' @export
+#'
+#' @examples
 .subset_data <-  function(object,
                          nFeature.upper=Inf,nFeature.lower=-Inf,
                          Counts.upper=Inf,Counts.lower=-Inf){

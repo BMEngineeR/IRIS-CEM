@@ -29,6 +29,7 @@ NULL
     tmp.gene.list <- gsub("_[0-9]$","",tmp.gene.list)
     tmp.df_C$cell_name <-tmp.gene.list
     object@BiCluster@CoReg_gene <- tmp.df_C
+    colnames(object@BiCluster@CoReg_gene)<- c("Gene","Condition")
     return(object)
   }
 
@@ -103,7 +104,7 @@ setMethod("RunDiscretization", "BRIC", .runDiscretization)
 #' Run cluster
 #'
 #' @param object
-#' @param DiscretizationModel
+#' @param DiscretizationModel asdasdasdasdasd
 #' @param OpenDual
 #' @param Extention
 #' @param NumBlockOutput

@@ -6,7 +6,7 @@ NULL
 #'
 #' @param SimpleResult marker gene only output log fold change (LFC), p-value, and adjusted p-value.
 #' @param FDR a number to specify the threshold of FDR, default by 0.05
-#'
+#' @name FindMarkers
 #' @importFrom DEsingle DEsingle DEtype
 #'
 .findMarkers <- function(object,SimpleResult = T, FDR = 0.05){

@@ -67,7 +67,17 @@ setMethod("RunClassification", "BRIC", .runClassification)
 
 
 
-.plotDimension <- function(object, reduction = "tsne", pt_size = 0.5){
+#' Title Visualize dimension reduction results
+#'
+#' @param object Input Object
+#' @param reduction Choose one of approaches for dimension reduction, including "pca", "tsne", "umap".
+#' @param pt_size point size, default is 0.
+#'
+#' @return
+#' @export
+#' @name PlotDimension
+#' @examples
+.plotDimension <- function(object, reduction = "umap", pt_size = 1){
 
   if(grepl("tsne", reduction, ignore.case = T) || grepl("umap", reduction, ignore.case = T)||grepl("pca", reduction, ignore.case = T)){
 
@@ -94,7 +104,8 @@ setMethod("RunClassification", "BRIC", .runClassification)
   p.cluster <- p.cluster+geom_point(stroke=pt_size,size=pt_size,aes(col=tmp.plot.table[,"Cell_type"]))
 
   p.cluster <- p.cluster + guides(colour = guide_legend(override.aes = list(size=5))) + labs( color ="cell type")+ xlab("Dimension 1") + ylab("Dimentsion 2")
-  p.cluster
+  p.cluster <- p.cluster+theme_classic()
+  print(p.cluster)
 }
 
 #' @rdname PlotDimension
