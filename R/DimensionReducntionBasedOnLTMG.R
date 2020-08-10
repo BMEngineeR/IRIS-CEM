@@ -7,7 +7,7 @@ NULL
 #' @param reduction
 #' @param dims
 #' @name RundimensionReduction
-#' @importFrom Seurat CreateSeuratObject ScaleData RunPCA RunTSNE RunUMAP
+#' @importFrom Seurat CreateSeuratObject ScaleData RunPCA RunTSNE RunUMAP FindVariableFeatures
 .runDimensionReduction <- function(object, reduction = "tsne", dims = 1:15 ,perplexity = 15, seed = 1){
   Tmp.seurat <- CreateSeuratObject(object@LTMG@LTMG_discrete)
   Tmp.seurat<- ScaleData(Tmp.seurat)

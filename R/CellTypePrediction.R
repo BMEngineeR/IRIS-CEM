@@ -142,13 +142,13 @@ CLUSTERING <- function(Raw,blocks,method='MCL',K=NULL){
   # chars file
   input <- paste0(getwd(),"/tmp_expression.txt.chars")
   tmp.label<-CLUSTERING(input, paste0(input,'.blocks'), method, K = K)    # not sure how to deal with that K
-  if (any(grepl("BRIC", colnames(object@MetaInfo), ignore.case = T))){
-    number.bric.label <- length(grep("BRIC",  colnames(object@MetaInfo)))
-    bric.label.orginal.name <- colnames(object@MetaInfo)[grep("BRIC",  colnames(object@MetaInfo))]
-    object@MetaInfo <- cbind(object@MetaInfo, BRIC_Label = tmp.label)
-    colnames(object@MetaInfo)[grep("BRIC",  colnames(object@MetaInfo))] <- c(bric.label.orginal.name,paste0("BRIC_Label_",number.bric.label +1))
+  if (any(grepl("MC", colnames(object@MetaInfo), ignore.case = T))){
+    number.bric.label <- length(grep("MC",  colnames(object@MetaInfo)))
+    bric.label.orginal.name <- colnames(object@MetaInfo)[grep("MC",  colnames(object@MetaInfo))]
+    object@MetaInfo <- cbind(object@MetaInfo, MC_Label = tmp.label)
+    colnames(object@MetaInfo)[grep("MC",  colnames(object@MetaInfo))] <- c(bric.label.orginal.name,paste0("MC_Label_",number.bric.label +1))
   } else {
-    object@MetaInfo <- cbind(object@MetaInfo, BRIC_Label = tmp.label)
+    object@MetaInfo <- cbind(object@MetaInfo, MC_Label = tmp.label)
   }
   return(object)
 }

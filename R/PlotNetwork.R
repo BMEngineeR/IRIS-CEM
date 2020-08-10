@@ -10,7 +10,7 @@ NULL
   Bic <- c()
   Bic.name <-c()
   for (i in 1:bic.number){
-    gene.name <- object@BiCluster@CoReg_gene$cell_name[object@BiCluster@CoReg_gene$Condition==i]
+    gene.name <- object@BiCluster@CoReg_gene[,1][object@BiCluster@CoReg_gene$Condition==i]
     cell.name <- object@BiCluster@CoCond_cell$cell_name[object@BiCluster@CoCond_cell$Condition==i]
     tmp.Bic <- tmp.expression[gene.name,cell.name]
     Bic.name <- c(Bic.name, paste0("Bicluster",i))

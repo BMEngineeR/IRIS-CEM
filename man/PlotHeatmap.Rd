@@ -8,14 +8,16 @@
 \usage{
 PlotHeatmap(object, ...)
 
-.plotHeatmap(object = object, N.block = c(1, 5))
+.plotHeatmap(object = object, N.bicluster = c(1, 5), show.overlap = F, ...)
 
-\S4method{PlotHeatmap}{BRIC}(object = object, N.block = c(1, 5))
+\S4method{PlotHeatmap}{BRIC}(object = object, N.bicluster = c(1, 5), show.overlap = F, ...)
 }
 \arguments{
 \item{object}{BRIC object}
 
-\item{N.block}{number of blocks}
+\item{N.bicluster}{number of biclusters}
+
+\item{show.overlap}{parameter indicates whether figure show the overlap part betwween two selected biclusters.}
 }
 \description{
 plot heatmap based on bicluster
