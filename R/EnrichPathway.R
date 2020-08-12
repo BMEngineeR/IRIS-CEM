@@ -14,6 +14,21 @@ NULL
                       pvalueCutoff  = 0.05,
                       qvalueCutoff  = 0.05)))
   }
+  return(pathway)
+}
+
+.IDConvert <- function(genes.use = NULL,species = NULL){
+  if(grepl("mouse", species, ignore.case = T)){
+    gene.convert <- bitr(genes.use, fromType = "SYMBOL",
+                         toType = c("ENSEMBL", "ENTREZID"),
+                         OrgDb = org.Mm.eg.db)
+  }
+  else if(grepl("human", species, ignore.case = T)){
+    gene.convert <- bitr(genes.use, fromType = "SYMBOL",
+                         toType = c("ENSEMBL", "ENTREZID"),
+                         OrgDb = org.Hs.eg.db)
+  }
+  return(gene.convert)
 }
 
 .RunKEGG <- function(genes.use = NULL,species = "mouse"){
@@ -31,6 +46,7 @@ NULL
                         pvalueCutoff  = 0.05,
                         qvalueCutoff  = 0.05)))
   }
+  return(pathway)
 }
 #' @param object
 #'
@@ -40,24 +56,25 @@ NULL
 #' @param database "GO" "KEGG"
 #' @param genes.source CTS Bicluster
 #'
-#' @importFrom clusterProfiler enrichKEGG enrichGO
+#' @importFrom clusterProfiler enrichKEGG enrichGO bitr
 #' @import org.Mm.eg.db org.Hs.eg.db
 #' @importFrom AnnotationDbi select
 #' @name RunPathway
 .runPathway <- function(object = NULL,module.number = NULL, selected.gene.cutoff = 0.05,
-                        species = "Human", database = "GO", genes.source = "CTS"){
+                        species = "Human", database = "GO", genes.source = c("CTS","Bicluster")){
   if (genes.source == "CTS"){
     tmp.table<- as.data.frame(object@LTMG@MarkerGene)
-    genes.use.LTMG <- rownames(tmp.table)[tmp.table$`pval-adj` < selected.gene.cutoff]
+    genes.use.LTMG <- rownames(tmp.table)[tmp.table$pvalue.adj.FDR < selected.gene.cutoff]
     if(database == "GO"){
       pathway <- .RunGO(genes.use = genes.use.LTMG , species = species)
     }else if(database == "KEGG"){
-      pathway <- .RunKEGG(genes.use = genes.use.LTMG , species = species)
+      ID.covert <- .IDConvert(genes.use.LTMG,species =species)
+      pathway <- .RunKEGG(genes.use = ID.covert$ENTREZID , species = species)
     }
     object@LTMG@Pathway <- pathway@result
   } else if (genes.source == "Bicluster" ){
     block.number <- module.number
-    genes.use.module <- object@BiCluster@CoReg_gene$cell_name[object@BiCluster@CoReg_gene$Condition == block.number]
+    genes.use.module <- object@BiCluster@CoReg_gene$Gene[object@BiCluster@CoReg_gene$Condition == block.number]
     # run on Bicluster marker gene
       if(is.null(object@BiCluster@MarkerGene)){message("There is no gene in MarkerGene slot.
                                                      \n Ignore pathway analysis based on marker gene derived from MC defined cell type. ")
@@ -70,7 +87,8 @@ NULL
     if(database == "GO"){
       pathway <- lapply(gene.list, function(x) .RunGO(genes.use = x , species = species))
     }else if(database == "KEGG"){
-      pathway <- lapply(gene.list, function(x) .RunKEGG(genes.use = x , species = species))
+      ID.covert<- lapply(gene.list, function(x) .IDConvert(genes.use = x , species = species))
+      pathway <- lapply(ID.covert, function(x) .RunKEGG(genes.use = x$ENTREZID , species = species))
     }
     object@BiCluster@PathwayFromModule <- pathway$genes.use.module@result
     if(is.null(genes.use.MC)){

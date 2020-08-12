@@ -19,5 +19,5 @@ RunLTMG(object, ...)
 
 }
 \description{
-RunLTMG
+This function is for moduling gene expression data via Left-truncated mixture Guassian model.
 }

@@ -12,7 +12,7 @@ PlotNetwork(object, ...)
   object,
   edge.by = "gene",
   lay.out = "linear",
-  N.block = c(1:20),
+  N.bicluster = c(1:20),
   ...
 )
 
@@ -20,7 +20,7 @@ PlotNetwork(object, ...)
   object,
   edge.by = "gene",
   lay.out = "linear",
-  N.block = c(1:20),
+  N.bicluster = c(1:20),
   ...
 )
 }

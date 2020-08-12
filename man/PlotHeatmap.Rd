@@ -8,9 +8,21 @@
 \usage{
 PlotHeatmap(object, ...)
 
-.plotHeatmap(object = object, N.bicluster = c(1, 5), show.overlap = F, ...)
+.plotHeatmap(
+  object = object,
+  N.bicluster = c(1, 5),
+  show.overlap = F,
+  seed = 123,
+  show.annotation = F
+)
 
-\S4method{PlotHeatmap}{BRIC}(object = object, N.bicluster = c(1, 5), show.overlap = F, ...)
+\S4method{PlotHeatmap}{BRIC}(
+  object = object,
+  N.bicluster = c(1, 5),
+  show.overlap = F,
+  seed = 123,
+  show.annotation = F
+)
 }
 \arguments{
 \item{object}{BRIC object}

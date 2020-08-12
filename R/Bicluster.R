@@ -102,18 +102,18 @@ setMethod("RunDiscretization", "BRIC", .runDiscretization)
 }
 
 #' Run cluster
-#'
+#' This function will identify the Biclusters based on LTMG or Quantile normalization
 #' @param object
-#' @param DiscretizationModel asdasdasdasdasd
-#' @param OpenDual
-#' @param Extention
-#' @param NumBlockOutput
-#' @param BlockOverlap
-#' @param BlockCellMin
+#' @param DiscretizationModel use different discretization method, including "Quantile" and "LTMG."
+#' @param OpenDual the flag using the lower bound of condition number. Default: 5% of the gene number in current bicluster.
+#' @param Extention consistency level of the block (0.5-1.0], the minimum ratio between the number of identical valid symbols in a column and the total number of rows in the output. Default: 1.0.
+#' @param NumBlockOutput number of blocks to report. Default: 100.
+#' @param BlockOverlap filtering overlapping blocks. Default: 0.7.
+#' @param BlockCellMin minimum column width of the block. Default: 15 columns.
 #' @name RunBicluster
 #' @return
 #' @examples
-.runBicluster <- function(object = NULL, DiscretizationModel = "LTMG",OpenDual = TRUE, Extension = 0.90,
+.runBicluster <- function(object = NULL, DiscretizationModel = "Quantile",OpenDual = FALSE, Extension = 0.90,
                           NumBlockOutput = 100, BlockOverlap = 0.7, BlockCellMin = 15) {
   if(DiscretizationModel != "LTMG" && DiscretizationModel != "Quantile"){stop("please select either LTMG or Quantile")}
   if(DiscretizationModel == "LTMG") {

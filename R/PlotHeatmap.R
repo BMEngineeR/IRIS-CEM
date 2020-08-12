@@ -7,13 +7,12 @@ NULL
 #'
 #' @param object BRIC object
 #' @param show.overlap parameter indicates whether figure show the overlap part betwween two selected biclusters.
-#' @param ...
 #' @param N.bicluster number of biclusters
 #'
 #' @name PlotHeatmap
 #' @import pheatmap
 #' @import Polychrome
-.plotHeatmap <- function(object = object, N.bicluster = c(1,5),show.overlap=F, seed =123,...){
+.plotHeatmap <- function(object = object, N.bicluster = c(1,5),show.overlap=F, seed =123, show.annotation = F){
   vec.boolean <- vector(mode = "logical")
   for (i in seq_along(N.bicluster)){
     vec.boolean[i]<-is.double(N.bicluster[i])
@@ -61,7 +60,7 @@ NULL
     heatmap.matrix <- object@Processed_count[rownames(annotation_row),rownames(annotation_col)]
 
   }
-  set.seed(seed)
+  #set.seed(seed)
 
   # ann_colors = list(
   #   Time = c("white", "firebrick"),
@@ -72,15 +71,18 @@ NULL
   for (i in 1:ncol(annotation_col)){
     annotation_col[,i]<-as.factor(annotation_col[,i])
   }
-
+  if(show.annotation == F){
+    annotation_col <- NULL
+  }
   pheatmap(heatmap.matrix,
            color = colorRampPalette(c("#A402DC","#0D0E00","#B1BD16"))(100),
            scale = "row",
            border_color=NA,
            cluster_rows = F,
            cluster_cols = F,
-           show_rownames = T,
+           show_rownames = F,
            show_colnames = F,
+           fontsize_number = 1,
            main = paste0("bicluster ",N.bicluster[1]," and bicluster ",N.bicluster[2]),
            annotation_col = annotation_col
            #annotation_row = annotation_row

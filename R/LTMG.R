@@ -237,7 +237,7 @@ LTMG<-function(VEC,Zcut_G,k=5){
 
 # Run LTMG function --------------------------------------------------------------------
 #' RunLTMG
-#'
+#' @description This function is for moduling gene expression data via Left-truncated mixture Guassian model.
 #' @param object
 #' @param Gene_use using X numebr of top variant gene. input a number, recommend 2000.
 #' @name RunLTMG

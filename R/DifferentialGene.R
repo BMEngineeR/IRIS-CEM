@@ -52,8 +52,9 @@ NULL
     colnames(results.classified) <- c("LFC","pval","pvalue.adj.FDR")
     rownames(results.classified) <- gene.name
     results.classified <- as.data.frame(results.classified)
+    results.classified <- results.classified[results.classified$pvalue.adj.FDR< FDR,]
   }
-  if(grepl("BRIC", label.used, ignore.case = T)){
+  if(grepl("MC", label.used, ignore.case = T)){
     object@BiCluster@MarkerGene <- results.classified
   } else {
     object@LTMG@MarkerGene <- results.classified

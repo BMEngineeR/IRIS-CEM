@@ -4,14 +4,15 @@
 \alias{RunBicluster}
 \alias{.runBicluster}
 \alias{RunBicluster,BRIC-method}
-\title{Run cluster}
+\title{Run cluster
+This function will identify the Biclusters based on LTMG or Quantile normalization}
 \usage{
 RunBicluster(object, ...)
 
 .runBicluster(
   object = NULL,
-  DiscretizationModel = "LTMG",
-  OpenDual = TRUE,
+  DiscretizationModel = "Quantile",
+  OpenDual = FALSE,
   Extension = 0.9,
   NumBlockOutput = 100,
   BlockOverlap = 0.7,
@@ -20,8 +21,8 @@ RunBicluster(object, ...)
 
 \S4method{RunBicluster}{BRIC}(
   object = NULL,
-  DiscretizationModel = "LTMG",
-  OpenDual = TRUE,
+  DiscretizationModel = "Quantile",
+  OpenDual = FALSE,
   Extension = 0.9,
   NumBlockOutput = 100,
   BlockOverlap = 0.7,
@@ -29,11 +30,22 @@ RunBicluster(object, ...)
 )
 }
 \arguments{
-\item{DiscretizationModel}{asdasdasdasdasd}
+\item{DiscretizationModel}{use different discretization method, including "Quantile" and "LTMG."}
+
+\item{OpenDual}{the flag using the lower bound of condition number. Default: 5% of the gene number in current bicluster.}
+
+\item{NumBlockOutput}{number of blocks to report. Default: 100.}
+
+\item{BlockOverlap}{filtering overlapping blocks. Default: 0.7.}
+
+\item{BlockCellMin}{minimum column width of the block. Default: 15 columns.}
+
+\item{Extention}{consistency level of the block (0.5-1.0], the minimum ratio between the number of identical valid symbols in a column and the total number of rows in the output. Default: 1.0.}
 }
 \value{
 
 }
 \description{
 Run cluster
+This function will identify the Biclusters based on LTMG or Quantile normalization
 }

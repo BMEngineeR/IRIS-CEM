@@ -131,3 +131,7 @@ setGeneric(name = "PlotMeta",
 setGeneric(name = "SubsetData",
            def =function(object, ...) standardGeneric("SubsetData"))
 
+#' @export
+#' @rdname PlotModuleNetwork
+setGeneric(name = "PlotModuleNetwork",
+           def =function(object, ...) standardGeneric("PlotModuleNetwork"))
