@@ -122,7 +122,7 @@ setMethod("PlotNetwork","BRIC", .plotnetwork)
 #' @param object Input object.
 #' @param N.bicluster number of biclsuter to plot.
 #' @param Node.color color of nodes. This parameter also accepts color codes, e.g. "#AE1503" or "darkred."
-#' @importFrom igraph graph.adjacency
+#' @importFrom igraph graph.adjacency degree
 #' @import qgraph
 #' @return
 #' @name PlotModuleNetwork
@@ -131,21 +131,21 @@ setMethod("PlotNetwork","BRIC", .plotnetwork)
 .plotmodulenetwork <- function(object = NULL, N.bicluster = c(1,5), Node.color = "#E8E504", node.label.cex = 1 ){
   my.list <- .generateNetObject(object =object,N.bicluster=N.bicluster )
   cort <- my.list[[1]]
-  my.adjacency <- ifelse(abs(cort)<0.2,0,cort)
+  my.adjacency <- ifelse(abs(cort)<0.1,0,cort)
   g <- graph.adjacency(my.adjacency,weighted = T,diag = F,mode ="undirected" )
   degree.normalize <- 4*(degree(g)/max(degree(g)))
   a<- my.list
   if (length(N.bicluster)==1){
     qgraph(a[[1]], groups = a[[2]],
-           theme = "classic",
-           layout = "circle", minimum = 0.5, posCol="grey", negCol="darkred",
+           theme = "classic",cut =0,
+           layout = "circle", minimum = 0.5, posCol=c("grey"), negCol="darkred",
            # barLength = 0.5,
            legend.cex = 0.7, color = Node.color,vsize = degree.normalize,vsize2= degree.normalize,
            vTrans = 200,label.cex =node.label.cex,labels = rownames(a[[1]]),label.scale=F)
   }
   if (length(N.bicluster)==2){
     qgraph(a[[1]], groups = a[[2]],
-           theme = "classic",
+           theme = "classic",cut =0,
            layout = "spring", minimum = 0.5, posCol="grey", negCol="darkred",
            # barLength = 0.5,
            legend.cex = 0.7, color = c("#AE1503", "#012290", "#908E03", "#808080"),vsize = degree.normalize,vsize2= degree.normalize, vTrans = 200,label.cex =node.label.cex,label.scale=F)

@@ -21,7 +21,7 @@ library(BRIC)
 load("d:/my_analysis/BRIC_TEST/2.Yan/YanObjectBRIC_qubic1.Rdata")
 ```
 
-# Intorduction to BRIC
+# Intorduction to IRIS-CEM
 
 ## General introduction 
 IRIS-CEM integrates in-house and state-of-the-art computational tools and provides two analysis strategies, including bicluster-based co-expression gene analysis [(Xie, et al., 2020)](https://academic.oup.com/bioinformatics/article-abstract/36/4/1143/5567116?redirectedFrom=fulltext) and LTMG (left-truncated mixture Gaussian model)-embedded scRNA-Seq analysis [(Wan, et al., 2019)](https://academic.oup.com/nar/article/47/18/e111/5542876).
@@ -30,7 +30,7 @@ IRIS-CEM integrates in-house and state-of-the-art computational tools and provid
 
 The main idea of IRIS-CEM consists of two major strategies: 
 
-* (i)  bicluster mode
+* (i)  biclustering 
 * (ii) quick mode (cluster) 
 
 ## Obejct structure 
@@ -62,7 +62,7 @@ The computational frame is constructed under the S4 data structure in R. The str
 # Requirements
 ## Environment
 
-We recommend user to install BRIC on large memory (32GB) based linux operation system if user aims at analyzing bicluster-based co-expression analysis; if user aims at analyzing data by quick mode, we recommend to install BRIC on small memeory (8GB) based Windows or linux operation system; BRIC does not support MAC. 
+We recommend user to install IRIS-CEM on large memory (32GB) based linux operation system if user aims at analyzing bicluster-based co-expression analysis; if user aims at analyzing data by quick mode, we recommend to install IRIS-CEM on small memeory (8GB) based Windows or linux operation system; IRIS-CEM does not support MAC. 
 We will assum you have the following installed:
 
 * R (equal or greater than 3.5)
@@ -77,7 +77,7 @@ devtools::install_github(repo = 'satijalab/seurat')
 ```
 ## Input
 
-1. The input to BRIC is the single-cell RNA-seq expression matrix:
+1. The input to IRIS-CEM is the single-cell RNA-seq expression matrix:
 
 + Rows correspond to genes and columns correspond to cells.
 + Expression units: the preferred expression values are RPKM/FPKM/CPM. 
@@ -87,7 +87,7 @@ devtools::install_github(repo = 'satijalab/seurat')
 
 ## Others
 
-When you perform co-expression analysis, it will output several intermediate files, thus please make sure that you have write permission to the folder where BRIC is located. 
+When you perform co-expression analysis, it will output several intermediate files, thus please make sure that you have write permission to the folder where IRIS-CEM is located. 
 
 # Installation
 
@@ -178,7 +178,7 @@ The argument `Gene_use = 500` is  top 500 highlt variant genes which are selecte
 object <- RunLTMG(object, Gene_use = 500, seed = 123)
 ```
 
-# 3. Quick mode.
+# 3. Seurat implemented analysis.
 
 ## Dimension Reduction
 User can use `reduction = "umap"` or `reductopm = "tsne"` to perform dimension reduction. 
@@ -227,11 +227,11 @@ object <- RunBicluster(object, DiscretizationModel = "Quantile",OpenDual = TRUE,
                           NumBlockOutput = 1000, BlockOverlap = 0.7, BlockCellMin = 15)
 ```
 
-(The default parameters in BRIC are BlockCellMin=15, BlockOverlap=0.7, Extension=0.90, NumBlockOutput=100 you may use other parameters as you like, just specify them in the argument)
+(The default parameters in IRIS-CEM are BlockCellMin=15, BlockOverlap=0.7, Extension=0.90, NumBlockOutput=100 you may use other parameters as you like, just specify them in the argument)
 
 ## Cell type prediction based on Markove clustering
 
-The cell type prediction of BRIC is based on the biclustering results. In short, it will construct a weighted graph based on the biclusters and then do clustering on the weighted graph. Currently, we provide two commonly used clustering method: MCL .
+The cell type prediction of IRIS-CEM is based on the biclustering results. In short, it will construct a weighted graph based on the biclusters and then do clustering on the weighted graph. Currently, we provide two commonly used clustering method: MCL .
 
 
 ```{r cell_type, eval=TRUE, echo =TRUE}
@@ -244,7 +244,7 @@ PlotHeatmap(object ,N.bicluster =c(1,5),show.annotation = T)
 ```
 
 
-```{r visualize_network, eval = FALSE, echo =TRUE }
+```{r visualize_network, eval = TRUE, echo =TRUE }
 PlotModuleNetwork(object, N.bicluster = 1, Node.color = "#E8E504")
 ```
 
@@ -257,7 +257,7 @@ object <- FindMarkers(object)
 User need to select cell type to compare, while here we select `4:Suerat0.5` as cell type category to analyze.
 ![markergene](D:/my_analysis\\BRIC_TEST\\figures\\LTMG\\markergebe_selection.png)
 
-Then BRIC will ask user choose a first group as reference, while here we select the third group (`3 : 2`) marked as cluster 2 in umap.
+Then IRIS-CEM will ask user choose a first group as reference, while here we select the third group (`3 : 2`) marked as cluster 2 in umap.
 ![markergene](D:/my_analysis\\BRIC_TEST\\figures\\LTMG\\markergene_1stGroup.png)
 
 Then user requires to select the second group as compared object, while here user can choose either one group (`2 : 1`, `3 : 2`), or rest of all groups (`4 : rest of all`). 
